@@ -144,6 +144,47 @@ const GraphDisplay: React.FC<{ graph: { nodes: GraphNode[]; edges: GraphEdge[] }
     );};
 
 
+const MappingTable: React.FC = () => (
+    <div style={{ 
+        background: '#fff', 
+        border: '1px solid #eee', 
+        borderRadius: 8, 
+        padding: '16px', 
+        width: '350px', 
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        alignSelf: 'flex-start',
+        marginTop: '16px'
+    }}>
+        <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '1.2rem', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
+            Mapping Reference
+        </h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+            <thead>
+                <tr style={{ background: '#f8f9fa' }}>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '2px solid #ddd' }}>ADL</th>
+                    <th style={{ textAlign: 'left', padding: '8px', borderBottom: '2px solid #ddd' }}>
+                        System Category <span style={{ fontWeight: 'normal', color: '#666' }}>[Margara et al. 2023]</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {[
+                    ['Batch Processing Component', 'Data Processing System with Job Deployment'],
+                    ['Stream Processing Component', 'Data Processing System with Task Deployment'],
+                    ['State-centric Component', 'Data Management System'],
+                    ['Persistent Link', 'Data Storage System'],
+                    ['Volatile Link', 'N/A (Communication Channel)']
+                ].map(([adl, cat], i) => (
+                    <tr key={i} style={{ borderBottom: i === 4 ? 'none' : '1px solid #f0f0f0' }}>
+                        <td style={{ padding: '8px', fontWeight: 600, color: '#333' }}>{adl}</td>
+                        <td style={{ padding: '8px', color: '#555' }}>{cat}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
+
 // --- Main Page Component ---
 
 const CandidateArchitectures: React.FC = () => {
@@ -257,30 +298,33 @@ const CandidateArchitectures: React.FC = () => {
                     {uniqueCandidatesWithCount && uniqueCandidatesWithCount.length > 0 && <Legend />}
                 </header>
 
-                {groupedCandidates && groupedCandidates.length > 0 ? (
-                    <div style={{ maxWidth: '1648px', margin: '0 auto' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', padding: '16px' }}>
-                            {uniqueCandidatesWithCount.map(({ graph, count }, index) => {
-                                 const probability = (count / totalCombinations) * 100;
-                                 return (
-                                     <div key={index} className="graph-container" style={{ textAlign: 'center', marginBottom: '16px' }}>
-                                         <GraphDisplay
-                                             graph={graph}
-                                         />
-                                         <p style={{ margin: '8px 0 0 0', fontSize: '1.8rem', fontWeight: 500, color: '#333' }}>
-                                             {index + 1}. Support: {probability.toFixed(1)}%
-                                         </p>
-                                     </div>
-                                 );
-                            })}
-                        </div>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', gap: '24px', padding: '0 16px' }}>
+                    <div style={{ flex: 1, maxWidth: '1648px' }}>
+                        {groupedCandidates && groupedCandidates.length > 0 ? (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', paddingBottom: '16px' }}>
+                                {uniqueCandidatesWithCount.map(({ graph, count }, index) => {
+                                     const probability = (count / totalCombinations) * 100;
+                                     return (
+                                         <div key={index} className="graph-container" style={{ textAlign: 'center', marginBottom: '16px' }}>
+                                             <GraphDisplay
+                                                 graph={graph}
+                                             />
+                                             <p style={{ margin: '8px 0 0 0', fontSize: '1.8rem', fontWeight: 500, color: '#333' }}>
+                                                 {index + 1}. Support: {probability.toFixed(1)}%
+                                             </p>
+                                         </div>
+                                     );
+                                })}
+                            </div>
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '8px' }}>
+                                <h2>No Candidate Architectures Found</h2>
+                                <p>Go back to the results page and generate candidates.</p>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '8px' }}>
-                        <h2>No Candidate Architectures Found</h2>
-                        <p>Go back to the results page and generate candidates.</p>
-                    </div>
-                )}
+                    <MappingTable />
+                </div>
             </div>
         </div>
     );
