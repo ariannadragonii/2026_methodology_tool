@@ -155,8 +155,8 @@ const MappingTable: React.FC = () => (
         alignSelf: 'flex-start',
         marginTop: '16px'
     }}>
-        <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '1.2rem', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
-            Mapping Reference
+        <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '1.2rem', borderBottom: '1px solid #eee', paddingBottom: '8px', textAlign: 'center' }}>
+            Systems Mapping
         </h3>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
             <thead>
