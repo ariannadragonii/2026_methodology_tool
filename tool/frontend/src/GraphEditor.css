@@ -1,0 +1,198 @@
+/* GraphEditor.css */
+
+/* GraphEditor.css */
+
+/* Error message banner */
+.error-message {
+  position: absolute;
+  top: 70px; /* Below controls */
+  right: 15px;
+  z-index: 10;
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 400px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  animation: modal-fade-in 0.3s ease-out;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Form styles within modals */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box; /* Important for width */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.modal-error {
+  color: #c62828;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Modal action buttons */
+.modal-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-actions button.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-actions button.primary:hover {
+  background-color: #0056b3;
+}
+
+.modal-actions button {
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.modal-actions button:hover {
+  background-color: #e6e6e6;
+}
+
+/* Custom Node Styles */
+.react-flow__node {
+  border-radius: 8px !important;
+  padding: 15px !important;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  min-width: 180px !important;
+  text-align: center;
+}
+
+.react-flow__node-active_p {
+  background-color: #e3f2fd !important;
+  border-color: #90caf9 !important;
+}
+
+.react-flow__node-reactive_p {
+  background-color: #d1c4e9 !important; /* A different color for reactive producers */
+  border-color: #b39ddb !important;
+}
+
+.react-flow__node-pull_c {
+  background-color: #ffebee !important;
+  border-color: #ef9a9a !important;
+}
+
+.react-flow__node-push_c {
+  background-color: #fce4ec !important; /* A different color for push consumers */
+  border-color: #f8bbd0 !important;
+}
+
+.react-flow__node-merge {
+  background-color: #e8f5e9 !important;
+  border-color: #a5d6a7 !important;
+}
+
+.react-flow__node-processing {
+  background-color: #fffde7 !important;
+  border-color: #fff59d !important;
+}
+
+.node-label strong {
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.node-label div {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.node-label .details {
+  margin-top: 8px;
+}

@@ -1,0 +1,24 @@
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  html, body {
+    width: 297mm;
+    height: 210mm;
+    background-color: #fff !important;
+  }
+  
+
+
+  /* Ensure react-flow backgrounds and borders are printed */
+  .react-flow__node, .react-flow__edge {
+    -webkit-print-color-adjust: exact; /* Chrome/Safari */
+    print-color-adjust: exact; /* Firefox */
+  }
+}
