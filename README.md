@@ -59,9 +59,5 @@ The `evaluation/` folder contains:
 - Anonymized responses from participants.
 - Analysis scripts or spreadsheets summarizing the results.
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ---
 *Note: This repository is anonymized for double-blind review.*
