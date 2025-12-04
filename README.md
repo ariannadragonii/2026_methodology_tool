@@ -14,7 +14,7 @@ The repository is organized as follows:
 - **`evaluation/`**: Contains the artifacts used to answer the Research Questions (RQs):
   - **RQ1**: JSON files representing the industrial scenarios used to validate the methodology.
   - **RQ2**: Raw data and results from the practitioner survey.
-- **`replication_package/`**: Contains supplementary material, such as high-resolution figures (UML profiles, generated architectures) referenced in the article.
+- **`paper_figures/`**: Contains supplementary material, such as high-resolution figures (UML profiles, generated architectures) referenced in the article.
 
 ## Getting Started with the Tool
 

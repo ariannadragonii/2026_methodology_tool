@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "id_p8jv7dp48",
+      "type": "reactive_p",
+      "name": "P1"
+    },
+    {
+      "id": "id_8b7zf83ig",
+      "type": "reactive_p",
+      "name": "P2"
+    },
+    {
+      "id": "id_svmn6s07a",
+      "type": "merge",
+      "name": "a1",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_oq4kzpk8v",
+      "type": "active_p",
+      "name": "P3"
+    },
+    {
+      "id": "id_8up94ejn1",
+      "type": "merge",
+      "name": "a2",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_mvjk1ji2q",
+      "type": "pull_c",
+      "name": "c1",
+      "deliveryGuarantee": "at most"
+    },
+    {
+      "id": "id_ny4smpov9",
+      "type": "pull_c",
+      "name": "C2",
+      "deliveryGuarantee": "at most"
+    }
+  ],
+  "edges": [
+    {
+      "id": "id_8dtglkqa8",
+      "source": "id_8b7zf83ig",
+      "target": "id_svmn6s07a",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "semistructured"
+      }
+    },
+    {
+      "id": "id_g4l3vns9l",
+      "source": "id_p8jv7dp48",
+      "target": "id_8up94ejn1",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_3a42nnafx",
+      "source": "id_svmn6s07a",
+      "target": "id_mvjk1ji2q",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_gf4hbsfot",
+      "source": "id_svmn6s07a",
+      "target": "id_8up94ejn1",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_8xtcjkh71",
+      "source": "id_8up94ejn1",
+      "target": "id_ny4smpov9",
+      "data": {
+        "frequency": 3600,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_u0ajukbij",
+      "source": "id_oq4kzpk8v",
+      "target": "id_svmn6s07a",
+      "data": {
+        "frequency": 0.0001,
+        "dataItem": "semistructured"
+      }
+    }
+  ]
+}

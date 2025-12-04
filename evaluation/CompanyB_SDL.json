@@ -1,0 +1,144 @@
+{
+  "nodes": [
+    {
+      "id": "id_kl74z6cjj",
+      "type": "active_p",
+      "name": "P_active1"
+    },
+    {
+      "id": "id_djbjhpgzt",
+      "type": "active_p",
+      "name": "P_active2"
+    },
+    {
+      "id": "id_dcnp75qo2",
+      "type": "processing",
+      "name": "a1",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_nvh00k3kq",
+      "type": "merge",
+      "name": "a2",
+      "inputCardinality": 100,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_qmo109hlf",
+      "type": "processing",
+      "name": "a3",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_vt36nsgd1",
+      "type": "processing",
+      "name": "a4",
+      "inputCardinality": 100,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_0yhtbyljr",
+      "type": "processing",
+      "name": "a5",
+      "inputCardinality": 10,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_a2hdk7a85",
+      "type": "pull_c",
+      "name": "C_pull1",
+      "deliveryGuarantee": "at most"
+    },
+    {
+      "id": "id_z44x1mb70",
+      "type": "pull_c",
+      "name": "C_pull2",
+      "deliveryGuarantee": "at most"
+    }
+  ],
+  "edges": [
+    {
+      "id": "id_trsooebdh",
+      "source": "id_djbjhpgzt",
+      "target": "id_nvh00k3kq",
+      "data": {
+        "frequency": 1,
+        "dataItem": "semistructured"
+      }
+    },
+    {
+      "id": "id_4xkzoiq7c",
+      "source": "id_kl74z6cjj",
+      "target": "id_nvh00k3kq",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "semistructured"
+      }
+    },
+    {
+      "id": "id_w745izydm",
+      "source": "id_kl74z6cjj",
+      "target": "id_dcnp75qo2",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "semistructured"
+      }
+    },
+    {
+      "id": "id_p767pklgy",
+      "source": "id_nvh00k3kq",
+      "target": "id_qmo109hlf",
+      "data": {
+        "frequency": 3600,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_srlevlro1",
+      "source": "id_qmo109hlf",
+      "target": "id_vt36nsgd1",
+      "data": {
+        "frequency": 0.001,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_oi7802rys",
+      "source": "id_vt36nsgd1",
+      "target": "id_0yhtbyljr",
+      "data": {
+        "frequency": 3600,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_9zy0m6ygk",
+      "source": "id_0yhtbyljr",
+      "target": "id_a2hdk7a85",
+      "data": {
+        "frequency": 60,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_xxtnm3zhq",
+      "source": "id_0yhtbyljr",
+      "target": "id_z44x1mb70",
+      "data": {
+        "frequency": 3600,
+        "dataItem": "structured"
+      }
+    },
+    {
+      "id": "id_sib4j0k1a",
+      "source": "id_dcnp75qo2",
+      "target": "id_nvh00k3kq",
+      "data": {
+        "frequency": 3600,
+        "dataItem": "structured"
+      }
+    }
+  ]
+}
