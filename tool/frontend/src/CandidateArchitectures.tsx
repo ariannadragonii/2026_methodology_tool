@@ -68,7 +68,7 @@ const GraphDisplay: React.FC<{ graph: { nodes: GraphNode[]; edges: GraphEdge[] }
     const { nodes: graphNodes, edges: graphEdges } = graph;
 
     const positionedNodes = useMemo(() => {
-        const producers = graphNodes.filter((n) => ['active_p', 'reactive_p'].includes(n.type));
+        const producers = graphNodes.filter((n) => ['active_p', 'passive_p'].includes(n.type));
         const consumers = graphNodes.filter((n) => ['pull_c', 'push_c'].includes(n.type));
         const actions = graphNodes.filter((n) => !producers.includes(n) && !consumers.includes(n));
 

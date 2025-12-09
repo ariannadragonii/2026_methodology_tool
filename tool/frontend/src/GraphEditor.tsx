@@ -29,7 +29,7 @@ type GraphEditorProps = {
   readOnly?: boolean;
 };
 
-export type NodeType = 'active_p' | 'reactive_p' | 'pull_c' | 'push_c' | 'merge' | 'processing';
+export type NodeType = 'active_p' | 'passive_p' | 'pull_c' | 'push_c' | 'merge' | 'processing';
 type ModalType = NodeType | null;
 
 type NodeData = {
@@ -50,7 +50,7 @@ const generateUniqueId = () => `id_${Math.random().toString(36).substr(2, 9)}`;
 const getTypeName = (type: NodeType) => {
   switch(type) {
     case 'active_p': return 'Active Producer';
-    case 'reactive_p': return 'Reactive Producer';
+    case 'passive_p': return 'Passive Producer';
     case 'pull_c': return 'Pull Consumer';
     case 'push_c': return 'Push Consumer';
     case 'merge': return 'Merge';
@@ -198,7 +198,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
     switch (modalType) {
       case 'active_p':
-      case 'reactive_p':
+      case 'passive_p':
         newNode = createNode(modalType, generateUniqueId(), nodeName.trim(), null, null, null, null, null, null);
         break;
       case 'pull_c':
@@ -299,7 +299,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
       // Compute deterministic positions so uploaded graphs display ordered
       // Group nodes: producers | actions (processing|merge) | consumers
-      const producers = loadedNodes.filter((nd: any) => nd.data.type === 'active_p' || nd.data.type === 'reactive_p');
+      const producers = loadedNodes.filter((nd: any) => nd.data.type === 'active_p' || nd.data.type === 'passive_p');
       const actions = loadedNodes.filter((nd: any) => nd.data.type === 'processing' || nd.data.type === 'merge');
       const consumers = loadedNodes.filter((nd: any) => nd.data.type === 'pull_c' || nd.data.type === 'push_c');
 
@@ -431,7 +431,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
       const targetInEdges = edges.filter((e) => e.target === targetNode.id).length + 1;
 
-      if (targetNode.data.type === 'active_p' || targetNode.data.type === 'reactive_p') {
+      if (targetNode.data.type === 'active_p' || targetNode.data.type === 'passive_p') {
         setErrorMessage('Producer nodes cannot have incoming edges.');
         return;
       }
@@ -490,7 +490,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
               outputCardinality: n.data.outputCardinality,
             };
           case 'active_p':
-          case 'reactive_p':
+          case 'passive_p':
           default:
             return base;
         }

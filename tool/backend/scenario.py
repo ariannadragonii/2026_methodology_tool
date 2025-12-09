@@ -24,8 +24,8 @@ def json_to_graph_scenario(json_scenario):
         if node_type == "active_p":
             add_active_producer(scenario, node_id)
         
-        elif node_type == "reactive_p":
-            add_reactive_producer(scenario, node_id)
+        elif node_type == "passive_p":
+            add_passive_producer(scenario, node_id)
 
         elif node_type == "pull_c":
             delivery = node.get("deliveryGuarantee", "")
@@ -142,8 +142,8 @@ def create_new_scenario():
 def add_active_producer(scenario, producer_name):
     add_producer(scenario, producer_name, 'active')
 
-def add_reactive_producer(scenario, producer_name):
-    add_producer(scenario, producer_name, 'reactive')
+def add_passive_producer(scenario, producer_name):
+    add_producer(scenario, producer_name, 'passive')
 
 # Adds a producer to a scenario
 def add_producer(scenario, producer_name, type):

@@ -75,8 +75,8 @@ const makePositions = (list: GraphNode[], xBase: number) => {
 		let label = n.name;
 		if (n.type === 'active_p') {
 			label = `${label}\n(Active)`;
-		} else if (n.type === 'reactive_p') {
-			label = `${label}\n(Reactive)`;
+		} else if (n.type === 'passive_p') {
+			label = `${label}\n(Passive)`;
 		} else if (n.type === 'pull_c') {
 			label = `${label}\n(Pull)`;
 		} else if (n.type === 'push_c') {
@@ -140,7 +140,7 @@ const FinalArchitecture = () => {
 	const location = useLocation();
 	const graphData = location.state?.graph as { nodes: GraphNode[]; edges: GraphEdge[] };
 
-	const producers = graphData?.nodes.filter((node) => node.type === 'active_p' || node.type === 'reactive_p') || [];
+	const producers = graphData?.nodes.filter((node) => node.type === 'active_p' || node.type === 'passive_p') || [];
 	const actions = graphData?.nodes.filter((node) => node.type === 'processing' || node.type === 'merge') || [];
 	const consumers = graphData?.nodes.filter((node) => node.type === 'pull_c' || node.type === 'push_c') || [];
 
@@ -229,7 +229,7 @@ const FinalArchitecture = () => {
 						<Controls />
 						<MiniMap
 							nodeColor={(node) => {
-								if (['active_p', 'reactive_p', 'pull_c', 'push_c'].includes(node.data.type)) return '#CCCCCC';
+								if (['active_p', 'passive_p', 'pull_c', 'push_c'].includes(node.data.type)) return '#CCCCCC';
 								const optimalType = node.data?.optimalType || 'default';
 								return PALETTE[optimalType as keyof typeof PALETTE];
 							}}

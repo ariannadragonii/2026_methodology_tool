@@ -33,8 +33,8 @@ def create_new_architecture():
 def add_architecture_active_producer(architecture, node_id, producer_name):
     add_architecture_producer(architecture, node_id, producer_name, 'active')
 
-def add_architecture_reactive_producer(architecture, node_id, producer_name):
-    add_architecture_producer(architecture, node_id, producer_name, 'reactive')
+def add_architecture_passive_producer(architecture, node_id, producer_name):
+    add_architecture_producer(architecture, node_id, producer_name, 'passive')
 
 # Adds a producer to a architecture
 def add_architecture_producer(architecture, node_id, producer_name, type):

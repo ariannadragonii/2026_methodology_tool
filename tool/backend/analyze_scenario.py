@@ -2,7 +2,7 @@ import json
 import numpy as np
 import networkx as nx
 from scenario import json_to_graph_scenario, find_action_nodes, find_f_in, find_f_out, find_consumers, find_edge_between_nodes, find_outgoing_edges
-from architecture import create_new_architecture, add_architecture_active_producer,add_architecture_reactive_producer, add_architecture_pull_consumer, add_architecture_push_consumer, add_component, add_link, from_graph_architecture_to_json, find_components_nodes
+from architecture import create_new_architecture, add_architecture_active_producer,add_architecture_passive_producer, add_architecture_pull_consumer, add_architecture_push_consumer, add_component, add_link, from_graph_architecture_to_json, find_components_nodes
 
 def calculate_costs(node_params, K_sc_coeff, K_dc_b_coeff, K_dc_s_coeff, K_rc_coeff):
     f_in = node_params['f_in']
@@ -48,8 +48,8 @@ def combine_data_flows(json_scenario, json_dataflows):
         if node_type == 'active_p':
             add_architecture_active_producer(graph_architecture, node_id, node_name)
             continue
-        elif node_type == 'reactive_p':
-            add_architecture_reactive_producer(graph_architecture, node_id, node_name)
+        elif node_type == 'passive_p':
+            add_architecture_passive_producer(graph_architecture, node_id, node_name)
             continue
         elif node_type == 'pull_c':
             delivery_guarantee = node['deliveryGuarantee']
@@ -146,7 +146,7 @@ def combine_data_flows(json_scenario, json_dataflows):
         # Matches: "at least", "at least once", "exactly", "exactly once"
         if 'at least' in delivery or 'exactly' in delivery:
             # Find all producers that have a path to this consumer
-            producers = [n for n, d in graph_scenario.nodes(data=True) if d.get('type') in ['active_p', 'reactive_p']]
+            producers = [n for n, d in graph_scenario.nodes(data=True) if d.get('type') in ['active_p', 'passive_p']]
             print(f"DEBUG: Found {len(producers)} producers for consumer {consumer}")
             for producer in producers:
                 # Check if there's a path from this producer to this consumer
@@ -210,11 +210,11 @@ def combine_data_flows(json_scenario, json_dataflows):
                         edge_attrs['optimalType'] = 'persistent'
 
     # Passive producers have volatile output links
-    archit_producers = [n for n, d in graph_architecture.nodes(data=True) if d.get('type') in ['active_p', 'reactive_p']]
+    archit_producers = [n for n, d in graph_architecture.nodes(data=True) if d.get('type') in ['active_p', 'passive_p']]
     for archit_producer in archit_producers:
         archit_producer_attrs = graph_architecture.nodes[archit_producer]
 
-        if archit_producer_attrs.get('type', '') == 'reactive_p':
+        if archit_producer_attrs.get('type', '') == 'passive_p':
             for successor_id in graph_architecture.successors(archit_producer):
 
                 edge_attrs = graph_architecture.get_edge_data(archit_producer, successor_id)[key]
@@ -404,8 +404,8 @@ def single_data_flow_analysis(data_flow_graph, K_sc_values, K_dc_b_values, K_rc_
         node_type = node_attrs.get('type')
         if node_type == 'active_p':
             node_types[node_id] = 'active_p'
-        elif node_type == 'reactive_p':
-            node_types[node_id] = 'reactive_p'
+        elif node_type == 'passive_p':
+            node_types[node_id] = 'passive_p'
         elif node_type == 'consumer':
             node_types[node_id] = 'consumer'
     

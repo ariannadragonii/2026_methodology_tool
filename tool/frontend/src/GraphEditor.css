@@ -154,8 +154,8 @@
   border-color: #90caf9 !important;
 }
 
-.react-flow__node-reactive_p {
-  background-color: #d1c4e9 !important; /* A different color for reactive producers */
+.react-flow__node-passive_p {
+  background-color: #d1c4e9 !important; /* A different color for passive producers */
   border-color: #b39ddb !important;
 }
 

@@ -119,7 +119,7 @@ const GraphDisplay: React.FC<{
   const flowNodes = React.useMemo(() => {
     if (!graph || !graph.nodes) return [];
     // group nodes by type to produce a deterministic left-to-right layout: producers | actions | consumers
-    const producers = graph.nodes.filter((x: any) => x.type === 'active_p' || x.type === 'reactive_p');
+    const producers = graph.nodes.filter((x: any) => x.type === 'active_p' || x.type === 'passive_p');
     const actions = graph.nodes.filter((x: any) => x.type === 'processing' || x.type === 'merge');
     const consumers = graph.nodes.filter((x: any) => x.type === 'pull_c' || x.type === 'push_c');
 
@@ -131,8 +131,8 @@ const GraphDisplay: React.FC<{
         let label = n.name ?? n.id;
         if (n.type === 'active_p') {
           label = `${label}\n(Active)`;
-        } else if (n.type === 'reactive_p') {
-          label = `${label}\n(Reactive)`;
+        } else if (n.type === 'passive_p') {
+          label = `${label}\n(Passive)`;
         } else if (n.type === 'pull_c') {
           label = `${label}\n(Pull)`;
         } else if (n.type === 'push_c') {
@@ -190,7 +190,7 @@ const GraphDisplay: React.FC<{
       
       const color = '#000';
       // producers and consumers should always be prod/cons color regardless of uniformity
-      if (n.type === 'active_p' || n.type === 'reactive_p' || n.type === 'pull_c' || n.type === 'push_c') {
+      if (n.type === 'active_p' || n.type === 'passive_p' || n.type === 'pull_c' || n.type === 'push_c') {
         bg = PALETTE.prodCons;
       }
       // set a CSS variable so we can override any !important rules coming from global CSS
@@ -243,7 +243,7 @@ const GraphDisplay: React.FC<{
     if (idx >= 0) {
       // Check if this is a producer or consumer node (skip opening surface for these)
       const graphNode = graph?.nodes?.find((gn: any) => gn.id === node.id);
-      if (graphNode && (graphNode.type === 'active_p' || graphNode.type === 'reactive_p' || graphNode.type === 'pull_c' || graphNode.type === 'push_c')) {
+      if (graphNode && (graphNode.type === 'active_p' || graphNode.type === 'passive_p' || graphNode.type === 'pull_c' || graphNode.type === 'push_c')) {
         return; // Don't open surface view for producers/consumers
       }
       // Open surface view for any action/processing node
@@ -1245,7 +1245,7 @@ const Results: React.FC = () => {
         };
 
         // Escludi optimalDataType per producer e consumer
-        const isProducerOrConsumer = ['active_p', 'reactive_p', 'pull_c', 'push_c'].includes(node.type);
+        const isProducerOrConsumer = ['active_p', 'passive_p', 'pull_c', 'push_c'].includes(node.type);
         if (isProducerOrConsumer) {
           return baseNode;
         }

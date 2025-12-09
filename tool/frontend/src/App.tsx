@@ -125,7 +125,7 @@ function App() {
         <div className="sidebar-scrollable-content">
           <div className="sidebar-controls">
             <button onClick={() => handleAddNode('active_p')}>Add Active Producer</button>
-            <button onClick={() => handleAddNode('reactive_p')}>Add Reactive Producer</button>
+            <button onClick={() => handleAddNode('passive_p')}>Add Passive Producer</button>
             <button onClick={() => handleAddNode('pull_c')}>Add Pull Consumer</button>
             <button onClick={() => handleAddNode('push_c')}>Add Push Consumer</button>
             <button onClick={() => handleAddNode('merge')}>Add Merge</button>
