@@ -67,7 +67,7 @@
       "target": "id_mvjk1ji2q",
       "data": {
         "frequency": 0.001,
-        "dataItem": "structured"
+        "dataItem": "semistructured"
       }
     },
     {
@@ -76,7 +76,7 @@
       "target": "id_8up94ejn1",
       "data": {
         "frequency": 0.001,
-        "dataItem": "structured"
+        "dataItem": "semistructured"
       }
     },
     {
@@ -85,7 +85,7 @@
       "target": "id_ny4smpov9",
       "data": {
         "frequency": 3600,
-        "dataItem": "structured"
+        "dataItem": "semistructured"
       }
     },
     {
