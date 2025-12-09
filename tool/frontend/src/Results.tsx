@@ -918,15 +918,15 @@ const GraphDisplay: React.FC<{
                         autosize: true,
                         scene: {
                             xaxis: { 
-                              title: 'data-centric stream cost (K_dc_s)',
+                              title: { text: 'K_dc_s' },
                               range: [0, 10]
                             },
                             yaxis: { 
-                              title: 'data-centric batch cost (K_dc_b)',
+                              title: { text: 'K_dc_b' },
                               range: [0, 10]
                             },
                             zaxis: { 
-                              title: 'state-centric cost (K_sc)',
+                              title: { text: 'K_sc' },
                               range: [0, 10]
                             }
                           },
@@ -935,30 +935,30 @@ const GraphDisplay: React.FC<{
                       } : viewMode === '2d-fix-ksc' ? {
                         autosize: true,
                         xaxis: {
-                          title: 'data-centric stream cost (K_dc_s)'
+                          title: { text: 'K_dc_s' }
                         },
                         yaxis: {
-                          title: 'data-centric batch cost (K_dc_b)'
+                          title: { text: 'K_dc_b' }
                         },
                         margin: { l: 60, r: 20, t: 20, b: 60 },
                         showlegend: false,
                       } : viewMode === '2d-fix-kdcb' ? {
                         autosize: true,
                         xaxis: {
-                          title: 'data-centric stream cost (K_dc_s)'
+                          title: { text: 'K_dc_s' }
                         },
                         yaxis: {
-                          title: 'state-centric cost (K_sc)'
+                          title: { text: 'K_sc' }
                         },
                         margin: { l: 60, r: 20, t: 20, b: 60 },
                         showlegend: false,
                       } : {
                         autosize: true,
                         xaxis: {
-                          title: 'data-centric batch cost (K_dc_b)' // x is K_dc_b
+                          title: { text: 'K_dc_b' } // x is K_dc_b
                         },
                         yaxis: {
-                          title: 'state-centric cost (K_sc)' // y is K_sc
+                          title: { text: 'K_sc' } // y is K_sc
                         },
                         margin: { l: 60, r: 20, t: 20, b: 60 },
                         showlegend: false,
@@ -975,8 +975,8 @@ const GraphDisplay: React.FC<{
                         // Extract values based on view mode
                         if (viewMode === '3d') {
                           // point.x = K_dc_s, point.y = K_dc_b, point.z = K_sc
-                          clickedKdcs = point.x;
-                          clickedKdcb = point.y;
+                          clickedKdcs = point.y;
+                          clickedKdcb = point.x;
                           clickedKsc = point.z;
                           
                           // Find closest values in arrays (to handle floating point precision)

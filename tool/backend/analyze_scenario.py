@@ -18,7 +18,7 @@ def calculate_costs(node_params, K_sc_coeff, K_dc_b_coeff, K_dc_s_coeff, K_rc_co
 
 # Evaluate the optimal type for a node at a specific point in the parameter space.
 def evaluate_node_at_point(node_params, K_sc, K_dc_b, K_rc, K_dc_s):
-    c_sc, c_dc_b, c_dc_s = calculate_costs(node_params, K_sc, K_dc_b, K_dc_s, K_rc)
+    c_sc, c_sc_c, c_dc_b, c_dc_s = calculate_costs(node_params, K_sc, K_dc_b, K_dc_s, K_rc)
     vals = {'sc': c_sc, 'dcb': c_dc_b, 'dcs': c_dc_s}
     best = min(vals, key=lambda k: vals[k])
     label_map = {
