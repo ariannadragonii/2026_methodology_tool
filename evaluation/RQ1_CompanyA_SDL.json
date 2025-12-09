@@ -2,13 +2,13 @@
   "nodes": [
     {
       "id": "id_p8jv7dp48",
-      "type": "reactive_p",
-      "name": "P1"
+      "type": "passive_p",
+      "name": "P_passive_1"
     },
     {
       "id": "id_8b7zf83ig",
-      "type": "reactive_p",
-      "name": "P2"
+      "type": "passive_p",
+      "name": "P_passive_2"
     },
     {
       "id": "id_svmn6s07a",
@@ -20,7 +20,7 @@
     {
       "id": "id_oq4kzpk8v",
       "type": "active_p",
-      "name": "P3"
+      "name": "P_active_3"
     },
     {
       "id": "id_8up94ejn1",
@@ -32,13 +32,13 @@
     {
       "id": "id_mvjk1ji2q",
       "type": "pull_c",
-      "name": "c1",
+      "name": "c_pull_1",
       "deliveryGuarantee": "at most"
     },
     {
       "id": "id_ny4smpov9",
       "type": "pull_c",
-      "name": "C2",
+      "name": "c_pull_2",
       "deliveryGuarantee": "at most"
     }
   ],

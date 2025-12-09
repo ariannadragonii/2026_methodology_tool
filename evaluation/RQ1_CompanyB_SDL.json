@@ -3,12 +3,12 @@
     {
       "id": "id_kl74z6cjj",
       "type": "active_p",
-      "name": "P_active1"
+      "name": "p_active_1"
     },
     {
       "id": "id_djbjhpgzt",
       "type": "active_p",
-      "name": "P_active2"
+      "name": "p_active_2"
     },
     {
       "id": "id_dcnp75qo2",
@@ -48,13 +48,13 @@
     {
       "id": "id_a2hdk7a85",
       "type": "pull_c",
-      "name": "C_pull1",
+      "name": "C_pull_1",
       "deliveryGuarantee": "at most"
     },
     {
       "id": "id_z44x1mb70",
       "type": "pull_c",
-      "name": "C_pull2",
+      "name": "C_pull_2",
       "deliveryGuarantee": "at most"
     }
   ],
