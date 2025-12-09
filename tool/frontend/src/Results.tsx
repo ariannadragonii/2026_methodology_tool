@@ -930,37 +930,46 @@ const GraphDisplay: React.FC<{
                               range: [0, 10]
                             }
                           },
-                        margin: { l: 60, r: 20, t: 20, b: 60 },
+                        margin: { l: 30, r: 200, t: 20, b: 60 },
                         showlegend: false,
                       } : viewMode === '2d-fix-ksc' ? {
                         autosize: true,
                         xaxis: {
-                          title: { text: 'K_dc_s' }
+                          title: { text: 'K_dc_s' },
+                          constrain: 'domain'
                         },
                         yaxis: {
-                          title: { text: 'K_dc_b' }
+                          title: { text: 'K_dc_b' },
+                          scaleanchor: 'x',
+                          scaleratio: 1
                         },
-                        margin: { l: 60, r: 20, t: 20, b: 60 },
+                        margin: { l: 30, r: 300, t: 20, b: 60 },
                         showlegend: false,
                       } : viewMode === '2d-fix-kdcb' ? {
                         autosize: true,
                         xaxis: {
-                          title: { text: 'K_dc_s' }
+                          title: { text: 'K_dc_s' },
+                          constrain: 'domain'
                         },
                         yaxis: {
-                          title: { text: 'K_sc' }
+                          title: { text: 'K_sc' },
+                          scaleanchor: 'x',
+                          scaleratio: 1
                         },
-                        margin: { l: 60, r: 20, t: 20, b: 60 },
+                        margin: { l: 30, r: 300, t: 20, b: 60 },
                         showlegend: false,
                       } : {
                         autosize: true,
                         xaxis: {
-                          title: { text: 'K_dc_b' } // x is K_dc_b
+                          title: { text: 'K_dc_b' }, // x is K_dc_b
+                          constrain: 'domain'
                         },
                         yaxis: {
-                          title: { text: 'K_sc' } // y is K_sc
+                          title: { text: 'K_sc' }, // y is K_sc
+                          scaleanchor: 'x',
+                          scaleratio: 1
                         },
-                        margin: { l: 60, r: 20, t: 20, b: 60 },
+                        margin: { l: 30, r: 300, t: 20, b: 60 },
                         showlegend: false,
                       }}
                       style={{ width: '100%', height: '100%' }}
@@ -1050,110 +1059,114 @@ const GraphDisplay: React.FC<{
                       }}
                     />
 
-                    {/* Embedded legend (no vertical colorbar) */}
-                    <div style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(255,255,255,0.95)', padding: 10, borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 20 }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Legend</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 18, height: 12, background: '#FAD105', border: '1px solid #888' }} />
-                          <div>State-Centric</div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 18, height: 12, background: '#59c7f3', border: '1px solid #888' }} />
-                          <div>Data-Centric - Batch</div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 18, height: 12, background: '#0490c8', border: '1px solid #888' }} />
-                          <div>Data-Centric - Stream</div>
+                    {/* Container for Legend and Evaluate fixed K point */}
+                    <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', flexDirection: 'column', gap: 10, zIndex: 20, alignItems: 'flex-end' }}>
+                      
+                      {/* Embedded legend (no vertical colorbar) */}
+                      <div style={{ background: 'rgba(255,255,255,0.95)', padding: 10, borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', width: '100%' }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Legend</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 18, height: 12, background: '#FAD105', border: '1px solid #888' }} />
+                            <div>State-Centric</div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 18, height: 12, background: '#59c7f3', border: '1px solid #888' }} />
+                            <div>Data-Centric - Batch</div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 18, height: 12, background: '#0490c8', border: '1px solid #888' }} />
+                            <div>Data-Centric - Stream</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Fixed K selector + evaluation - bottom right */}
-                    <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(255,248,240,0.98)', padding: 12, borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 20, minWidth: 280 }}>
-                      <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Evaluate fixed K point</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                        <label style={{ fontSize: 12 }}>K_sc
-                          <input type="number" value={fixedK_sc as any} onChange={(e) => setFixedK_sc(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
-                        </label>
-                        <label style={{ fontSize: 12 }}>K_dc_b
-                          <input type="number" value={fixedK_dc_b as any} onChange={(e) => setFixedK_dc_b(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
-                        </label>
-                        <label style={{ fontSize: 12 }}>K_rc
-                          <input type="number" value={fixedK_rc as any} onChange={(e) => setFixedK_rc(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
-                        </label>
-                        <label style={{ fontSize: 12 }}>K_dc_s
-                          <input type="number" value={fixedK_dc_s as any} onChange={(e) => setFixedK_dc_s(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
-                        </label>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button
-                            onClick={async () => {
-                              // Call backend to evaluate the point
-                              if (!currentNode) return;
-                              if (fixedK_sc === '' || fixedK_dc_b === '' || fixedK_rc === '' || fixedK_dc_s === '') return;
-                              
-                              // Find the full analysis data for the current node to get node_params
-                              const nodeAnalysisData = analysisNodes.find((n: any) => n.id === currentNode.id);
-                              if (!nodeAnalysisData || !nodeAnalysisData.node_params) {
-                                alert('Could not find analysis data (node_params) for the selected node.');
-                                return;
-                              }
-
-                              try {
-                                const response = await fetch('/evaluate_point', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                    node_params: nodeAnalysisData.node_params,
-                                    K_sc: Number(fixedK_sc),
-                                    K_dc_b: Number(fixedK_dc_b),
-                                    K_rc: Number(fixedK_rc),
-                                    K_dc_s: Number(fixedK_dc_s),
-                                  }),
-                                });
+                      {/* Fixed K selector + evaluation - vertical layout */}
+                      <div style={{ background: 'rgba(255,248,240,0.98)', padding: 12, borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', minWidth: 200 }}>
+                        <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Evaluate fixed K point</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <label style={{ fontSize: 12 }}>K_sc
+                            <input type="number" value={fixedK_sc as any} onChange={(e) => setFixedK_sc(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
+                          </label>
+                          <label style={{ fontSize: 12 }}>K_dc_b
+                            <input type="number" value={fixedK_dc_b as any} onChange={(e) => setFixedK_dc_b(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
+                          </label>
+                          <label style={{ fontSize: 12 }}>K_rc
+                            <input type="number" value={fixedK_rc as any} onChange={(e) => setFixedK_rc(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
+                          </label>
+                          <label style={{ fontSize: 12 }}>K_dc_s
+                            <input type="number" value={fixedK_dc_s as any} onChange={(e) => setFixedK_dc_s(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '4px', fontSize: 12 }} />
+                          </label>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button
+                              onClick={async () => {
+                                // Call backend to evaluate the point
+                                if (!currentNode) return;
+                                if (fixedK_sc === '' || fixedK_dc_b === '' || fixedK_rc === '' || fixedK_dc_s === '') return;
                                 
-                                if (!response.ok) {
-                                  const error = await response.json();
-                                  console.error('Evaluate failed:', error);
-                                  alert('Evaluation failed: ' + (error.detail || 'Unknown error'));
+                                // Find the full analysis data for the current node to get node_params
+                                const nodeAnalysisData = analysisNodes.find((n: any) => n.id === currentNode.id);
+                                if (!nodeAnalysisData || !nodeAnalysisData.node_params) {
+                                  alert('Could not find analysis data (node_params) for the selected node.');
                                   return;
                                 }
+
+                                try {
+                                  const response = await fetch('/evaluate_point', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      node_params: nodeAnalysisData.node_params,
+                                      K_sc: Number(fixedK_sc),
+                                      K_dc_b: Number(fixedK_dc_b),
+                                      K_rc: Number(fixedK_rc),
+                                      K_dc_s: Number(fixedK_dc_s),
+                                    }),
+                                  });
+                                  
+                                  if (!response.ok) {
+                                    const error = await response.json();
+                                    console.error('Evaluate failed:', error);
+                                    alert('Evaluation failed: ' + (error.detail || 'Unknown error'));
+                                    return;
+                                  }
+                                  
+                                  const result = await response.json();
+                                  setFixedResult({ label: result.label, code: result.type });
+                                } catch (err) {
+                                  console.error('Failed to evaluate point:', err);
+                                  alert('Failed to evaluate point');
+                                }
+                              }}
+                              style={{ padding: '6px 10px', fontSize: 12, flex: 1 }}
+                            >Evaluate</button>
+                            <button
+                              onClick={async () => {
+                                // assign the fixed result to the current node
+                                if (!currentNode || !fixedResult) return;
                                 
-                                const result = await response.json();
-                                setFixedResult({ label: result.label, code: result.type });
-                              } catch (err) {
-                                console.error('Failed to evaluate point:', err);
-                                alert('Failed to evaluate point');
-                              }
-                            }}
-                            style={{ padding: '6px 10px', fontSize: 12, flex: 1 }}
-                          >Evaluate</button>
-                          <button
-                            onClick={async () => {
-                              // assign the fixed result to the current node
-                              if (!currentNode || !fixedResult) return;
-                              
-                              const newType = fixedResult.code;
-                              
-                              // Update node color
-                              setManualNodeColor(currentNode.id, newType);
-                              
-                              // Close the surface view
-                              setSelectedNodeIndex(null);
-                            }}
-                            disabled={!fixedResult}
-                            style={{ padding: '6px 10px', fontSize: 12, flex: 1, opacity: fixedResult ? 1 : 0.5, cursor: fixedResult ? 'pointer' : 'not-allowed' }}
-                          >Select</button>
-                        </div>
-                        <div style={{ fontSize: 12 }}>
-                          {fixedResult ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: 6, background: 'rgba(255,255,255,0.7)', borderRadius: 4 }}>
-                              <div style={{ width: 16, height: 10, background: (fixedResult.code === 'sc' ? '#FAD105' : fixedResult.code === 'dcb' ? '#59c7f3' : '#0490c8'), border: '1px solid #888' }} />
-                              <div><strong>{fixedResult.label}</strong></div>
-                            </div>
-                          ) : <div style={{ color: '#666', textAlign: 'center', padding: 4 }}>No evaluation yet</div>}
+                                const newType = fixedResult.code;
+                                
+                                // Update node color
+                                setManualNodeColor(currentNode.id, newType);
+                                
+                                // Close the surface view
+                                setSelectedNodeIndex(null);
+                              }}
+                              disabled={!fixedResult}
+                              style={{ padding: '6px 10px', fontSize: 12, flex: 1, opacity: fixedResult ? 1 : 0.5, cursor: fixedResult ? 'pointer' : 'not-allowed' }}
+                            >Select</button>
+                          </div>
+                          <div style={{ fontSize: 12 }}>
+                            {fixedResult ? (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: 6, background: 'rgba(255,255,255,0.7)', borderRadius: 4 }}>
+                                <div style={{ width: 16, height: 10, background: (fixedResult.code === 'sc' ? '#FAD105' : fixedResult.code === 'dcb' ? '#59c7f3' : '#0490c8'), border: '1px solid #888' }} />
+                                <div><strong>{fixedResult.label}</strong></div>
+                              </div>
+                            ) : <div style={{ color: '#666', textAlign: 'center', padding: 4 }}>No evaluation yet</div>}
+                          </div>
                         </div>
                       </div>
                     </div>
