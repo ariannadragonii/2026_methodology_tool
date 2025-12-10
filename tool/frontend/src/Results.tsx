@@ -47,8 +47,6 @@ const GraphDisplay: React.FC<{
 
   const [selectedNodeIndex, setSelectedNodeIndex] = useState<number | null>(null);
   const [isPublicationViewOpen, setPublicationViewOpen] = useState(false);
-  const [isRangeAnalysisViewOpen, setRangeAnalysisViewOpen] = useState(false);
-  const [rangeAnalysisResult, setRangeAnalysisResult] = useState('');
   const [selectedKrcIndex, setSelectedKrcIndex] = useState(1); // default to index 1 for K_rc slider
   const [selectedKscIndex, setSelectedKscIndex] = useState<'all' | number>('all');
   // View mode: '3d' shows all three axes, '2d-fix-*' fixes one axis and shows 2D surface
@@ -571,194 +569,6 @@ const GraphDisplay: React.FC<{
                 <button onClick={() => setPublicationViewOpen(true)} style={{ marginRight: 8, padding: '8px 12px', fontSize: '14px' }}>
                   Generate Publication Figure
                 </button>
-                <button 
-                  onClick={() => {
-                    if (!currentNode) return;
-
-                    const {
-                        K_sc_values,
-                        K_dc_b_values,
-                        K_rc_slice_values,
-                        K_dc_s_values,
-                        matrices,
-                    } = currentNode;
-
-                    // === STAGE 1: Find all disjoint hyperrectangles ===
-                    const visited = new Set<string>();
-                    const regions: { type: string; ranges: number[][] }[] = [];
-
-                    const numKdcs = K_dc_s_values.length;
-                    const numKrc = K_rc_slice_values.length;
-                    const numKsc = K_sc_values.length;
-                    const numKdcb = K_dc_b_values.length;
-
-                    for (let i_start = 0; i_start < numKdcs; i_start++) {
-                    for (let j_start = 0; j_start < numKrc; j_start++) {
-                    for (let k_start = 0; k_start < numKsc; k_start++) {
-                    for (let l_start = 0; l_start < numKdcb; l_start++) {
-                        const startKey = `${i_start},${j_start},${k_start},${l_start}`;
-                        if (visited.has(startKey)) continue;
-
-                        const type = matrices[String(i_start)][j_start][k_start][l_start];
-                        
-                        let l_max = l_start;
-                        while(l_max + 1 < numKdcb && !visited.has(`${i_start},${j_start},${k_start},${l_max + 1}`) && matrices[String(i_start)][j_start][k_start][l_max + 1] === type) { l_max++; }
-                        
-                        let k_max = k_start;
-                        let canExpandK = true;
-                        while(canExpandK && k_max + 1 < numKsc) {
-                            for (let l_scan = l_start; l_scan <= l_max; l_scan++) {
-                                if (visited.has(`${i_start},${j_start},${k_max + 1},${l_scan}`) || matrices[String(i_start)][j_start][k_max + 1][l_scan] !== type) {
-                                    canExpandK = false;
-                                    break;
-                                }
-                            }
-                            if (canExpandK) k_max++;
-                        }
-
-                        let j_max = j_start;
-                        let canExpandJ = true;
-                        while(canExpandJ && j_max + 1 < numKrc) {
-                            for (let k_scan = k_start; k_scan <= k_max; k_scan++) {
-                                for (let l_scan = l_start; l_scan <= l_max; l_scan++) {
-                                    if (visited.has(`${i_start},${j_max + 1},${k_scan},${l_scan}`) || matrices[String(i_start)][j_max + 1][k_scan][l_scan] !== type) {
-                                        canExpandJ = false;
-                                        break;
-                                    }
-                                }
-                                if (!canExpandJ) break;
-                            }
-                            if (canExpandJ) j_max++;
-                        }
-
-                        let i_max = i_start;
-                        let canExpandI = true;
-                        while(canExpandI && i_max + 1 < numKdcs) {
-                            for (let j_scan = j_start; j_scan <= j_max; j_scan++) {
-                                for (let k_scan = k_start; k_scan <= k_max; k_scan++) {
-                                    for (let l_scan = l_start; l_scan <= l_max; l_scan++) {
-                                        if (visited.has(`${i_max + 1},${j_scan},${k_scan},${l_scan}`) || matrices[String(i_max + 1)][j_scan][k_scan][l_scan] !== type) {
-                                            canExpandI = false;
-                                            break;
-                                        }
-                                    }
-                                    if (!canExpandI) break;
-                                }
-                                if (!canExpandI) break;
-                            }
-                            if (canExpandI) i_max++;
-                        }
-
-                        for (let i_v = i_start; i_v <= i_max; i_v++) {
-                        for (let j_v = j_start; j_v <= j_max; j_v++) {
-                        for (let k_v = k_start; k_v <= k_max; k_v++) {
-                        for (let l_v = l_start; l_v <= l_max; l_v++) {
-                            visited.add(`${i_v},${j_v},${k_v},${l_v}`);
-                        }}}}
-
-                        regions.push({
-                            type: type,
-                            ranges: [ [i_start, i_max], [j_start, j_max], [k_start, k_max], [l_start, l_max] ]
-                        });
-                    }}}}
-
-                    // === STAGE 2: Group regions by type ===
-                    const groupedRegions = regions.reduce((acc, region) => {
-                        if (!acc[region.type]) {
-                            acc[region.type] = [];
-                        }
-                        acc[region.type].push(region.ranges);
-                        return acc;
-                    }, {} as Record<string, number[][][]>);
-
-                    // === STAGE 3: Condense/Merge regions for each type ===
-                    for (const type in groupedRegions) {
-                        let rects = groupedRegions[type];
-                        let mergedInPass = true;
-                        while (mergedInPass) {
-                            mergedInPass = false;
-                            for (let i = 0; i < rects.length; i++) {
-                                for (let j = i + 1; j < rects.length; j++) {
-                                    const r1 = rects[i];
-                                    const r2 = rects[j];
-                                    let diffDim = -1;
-                                    let canMerge = true;
-                                    // Check if they differ in exactly one dimension
-                                    for (let d = 0; d < 4; d++) {
-                                        if (r1[d][0] !== r2[d][0] || r1[d][1] !== r2[d][1]) {
-                                            if (diffDim === -1) {
-                                                diffDim = d;
-                                            } else {
-                                                canMerge = false; 
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (canMerge && diffDim !== -1) {
-                                        const d = diffDim;
-                                        // Check for adjacency on that one differing dimension
-                                        if (r1[d][1] + 1 === r2[d][0] || r2[d][1] + 1 === r1[d][0]) {
-                                            // Merge them
-                                            const newRect = JSON.parse(JSON.stringify(r1));
-                                            newRect[d][0] = Math.min(r1[d][0], r2[d][0]);
-                                            newRect[d][1] = Math.max(r1[d][1], r2[d][1]);
-                                            
-                                            rects[i] = newRect; 
-                                            rects.splice(j, 1); 
-                                            
-                                            mergedInPass = true;
-                                            break; // Restart scan
-                                        }
-                                    }
-                                }
-                                if (mergedInPass) break;
-                            }
-                        }
-                        groupedRegions[type] = rects;
-                    }
-
-
-                    // === STAGE 4: Format final results ===
-                    const typeLabels: Record<string, string> = { sc: 'State-Centric (sc)', dcb: 'Data-Centric - Batch (dcb)', dcs: 'Data-Centric - Stream (dcs)' };
-                    const kLabels = ['K_dc_s', 'K_rc', 'K_sc', 'K_dc_b']; // Corrisponde all'ordine i,j,k,l
-                    const kValues = [K_dc_s_values, K_rc_slice_values, K_sc_values, K_dc_b_values]; // Corrisponde all'ordine i,j,k,l
-                    
-                    let resultString = `Optimal Type Ranges Analysis for Node: ${currentNode.id}\n\n(Generated with MERGED non-overlapping region algorithm)\n\n`;
-                    
-                    for (const type of ['sc', 'dcb', 'dcs']) { // Enforce order
-                        if (!groupedRegions[type] || groupedRegions[type].length === 0) continue;
-
-                        resultString += `-----------------------------------\n`;
-                        resultString += `TYPE: ${typeLabels[type] || type}\n`;
-                        resultString += `-----------------------------------\n`;
-                        resultString += `This type is optimal in ${groupedRegions[type].length} distinct region(s):\n\n`;
-                        
-                        const rules = groupedRegions[type].map(rangeSet => {
-                            const conditions = rangeSet.map((range, index) => {
-                                const kLabel = kLabels[index];
-                                const values = kValues[index];
-                                const minVal = values[range[0]];
-                                const maxVal = values[range[1]];
-                                if (minVal === maxVal) {
-                                    return `${kLabel} is ${minVal}`;
-                                }
-                                return `${kLabel} is between ${minVal} and ${maxVal}`;
-                            });
-                            return `( ${conditions.join(' AND ')} )`;
-                        });
-                        
-                        resultString += rules.join('\n  OR\n');
-                        resultString += '\n\n';
-                    }
-
-                    setRangeAnalysisResult(resultString || 'No analysis results could be generated.');
-                    setRangeAnalysisViewOpen(true);
-                  }} 
-                  style={{ marginRight: 8, padding: '8px 12px', fontSize: '14px' }}
-                >
-                  Analyze Optimal Ranges
-                </button>
                 <button onClick={() => setSelectedNodeIndex(null)} style={{ marginRight: 8 }}>Close</button>
               </div>
             </div>
@@ -1180,6 +990,29 @@ const GraphDisplay: React.FC<{
                             ) : <div style={{ color: '#666', textAlign: 'center', padding: 4 }}>No evaluation yet</div>}
                           </div>
                         </div>
+                        
+                        {manualNodeColors[currentNode.id] && (
+                          <button 
+                            onClick={() => {
+                              setManualNodeColor(currentNode.id, '');
+                              setSelectedNodeIndex(null);
+                            }}
+                            style={{ 
+                              width: '100%',
+                              padding: '8px 12px', 
+                              fontSize: '13px', 
+                              backgroundColor: '#fff', 
+                              border: '1px solid #ccc', 
+                              borderRadius: 6, 
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                              fontWeight: 600,
+                              color: '#333'
+                            }}
+                          >
+                            Reset Color
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -1199,20 +1032,6 @@ const GraphDisplay: React.FC<{
           currentNode={currentNode}
           onClose={() => setPublicationViewOpen(false)}
         />
-      )}
-
-      {isRangeAnalysisViewOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', width: '80vw', height: '80vh', overflow: 'auto', display: 'flex', flexDirection: 'column', padding: '16px', borderRadius: '8px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc', paddingBottom: '12px', marginBottom: '12px' }}>
-              <h2 style={{ margin: 0 }}>Optimal Range Analysis</h2>
-              <button onClick={() => setRangeAnalysisViewOpen(false)} style={{ fontSize: '1em', padding: '8px 16px' }}>Close</button>
-            </div>
-            <pre style={{ flex: 1, background: '#f4f4f4', padding: '12px', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-              {rangeAnalysisResult}
-            </pre>
-          </div>
-        </div>
       )}
     </div>
   );
@@ -1336,6 +1155,32 @@ const Results: React.FC = () => {
 
       if (res.ok) {
         const resultJson = await res.json();
+
+        // Save current state to history before navigating away
+        const stateToSave = {
+          analysisResults,
+          scenario,
+          manualNodeColors,
+          selectedNodeIndex,
+          selectedKrcIndex,
+          selectedKscIndex,
+          viewMode,
+          fixedKscValue,
+          fixedKdcbValue,
+          fixedKdcsValue,
+          fixedK_sc,
+          fixedK_dc_b,
+          fixedK_rc,
+          fixedK_dc_s,
+          fixedResult
+        };
+        const historyState = window.history.state;
+        const newHistoryState = {
+            ...historyState,
+            usr: { ...historyState?.usr, ...stateToSave }
+        };
+        window.history.replaceState(newHistoryState, '');
+
         navigate('/candidate-architectures', { state: { candidateArchitectures: resultJson } });
       } else {
         const errText = await res.text();
