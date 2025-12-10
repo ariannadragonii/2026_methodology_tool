@@ -4,7 +4,7 @@ This repository contains the replication package and the supporting tool for the
 
 The repository provides all the necessary artifacts to replicate the study, including the source code of the proposed tool, the datasets used for evaluation, and high-resolution versions of the figures presented in the paper.
 
-## 📂 Repository Structure
+## Repository Structure
 
 The repository is organized as follows:
 
@@ -14,13 +14,13 @@ The repository is organized as follows:
 - **`evaluation/`**: Contains the artifacts used to answer the Research Questions (RQs):
   - **RQ1**: JSON files representing the industrial scenarios used to validate the methodology.
   - **RQ2**: Raw data and results from the practitioner survey.
-- **`paper_figures/`**: Contains supplementary material, such as high-resolution figures (UML profiles, generated architectures) referenced in the article.
+- **`paper_figures/`**: Contains supplementary material, such as high-resolution figures referenced in the article.
 
 ---
 
-## 🛠️ The Tool
+## The Tool
 
-The tool provided in this repository is the reference implementation of the methodology. It provides a web-based environment where software architects can model scenarios, simulate different load conditions, and automatically generate optimal architectural candidates based on a rigorous cost analysis.
+The tool provided in this repository is the reference implementation of the methodology. It provides a web-based environment where software architects can model scenarios, simulate different load conditions, and automatically generate candidate architectures based on a rigorous cost analysis.
 
 ### Key Features
 
@@ -36,7 +36,7 @@ The tool is built as a web application with a decoupled architecture:
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - **Python 3.8+**
@@ -95,7 +95,7 @@ The frontend provides the user interface.
 
 ---
 
-## 📖 Usage Guide
+## Usage Guide
 
 1. **Model the Scenario**:
    - Use the **Graph Editor** to add nodes (Producers, Consumers, etc.) via the sidebar.
@@ -114,7 +114,7 @@ The frontend provides the user interface.
 
 ---
 
-## 🔬 Replication Instructions
+## Replication Instructions
 
 ### Replicating RQ1 (Industrial Scenarios)
 To replicate the results for RQ1:
