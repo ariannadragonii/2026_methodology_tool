@@ -297,27 +297,33 @@ const GraphDisplay: React.FC<{
         // This allows each layer to be independently colored and positioned
         
         K_sc.forEach((K_sc_val: number, kscIdx: number) => {
-          // Correctly build gridData[dcbIdx][kdcsIdx]
-          // This ensures rows are K_dc_b (Y) and columns are K_dc_s (X)
-          const gridData = K_dc_b.map((_: any, dcbIdx: number) => {
-            return K_dc_s_values.map((_: any, kdcsIdx: number) => {
+          // Transpose the grid generation to match Plotly's expected [y][x] or [x][y] behavior as observed by user
+          // Previous [dcb][kdcs] (y,x) resulted in inverted tooltips.
+          // Trying [kdcs][dcb] (x,y) structure.
+          
+          const gridData = K_dc_s_values.map((_: any, kdcsIdx: number) => {
+            return K_dc_b.map((_: any, dcbIdx: number) => {
               return currentNode.matrices[String(kdcsIdx)][krcIdx][kscIdx][dcbIdx];
             });
           });
           
-          // Convert type codes to numbers
-          const surfaceColor = gridData.map((row: string[]) => row.map((v: string) => (typeToNum[String(v)] ?? NaN)));
+          // Use a specific mapping for 3D to invert Batch/Stream colors as requested
+          const typeToNum3D: Record<string, number> = { sc: 0, dcs: 2, dcb: 1 };
+          
+          // Convert type codes to numbers using the 3D specific mapping
+          const surfaceColor = gridData.map((row: string[]) => row.map((v: string) => (typeToNum3D[String(v)] ?? NaN)));
           
           // Create Z grid where all points have the same K_sc value (this layer's height)
-          const zHeight = gridData.map(() => K_dc_s_values.map(() => K_sc_val));
+          const zHeight = gridData.map(() => K_dc_b.map(() => K_sc_val));
           
           // Create hover text
-          const hoverText = gridData.map((row: string[], dcbIdx: number) => row.map((typeCode: string, kdcsIdx: number) => `K_dc_s: ${K_dc_s_values[kdcsIdx]}<br>K_dc_b: ${K_dc_b[dcbIdx]}<br>K_sc: ${K_sc_val}<br>Type: ${typeLabels[typeCode] || typeCode}`));
+          // Note: row is kdcsIdx, col is dcbIdx
+          const hoverText = gridData.map((row: string[], kdcsIdx: number) => row.map((typeCode: string, dcbIdx: number) => `K_dc_s: ${K_dc_s_values[kdcsIdx]}<br>K_dc_b: ${K_dc_b[dcbIdx]}<br>K_sc: ${K_sc_val}<br>Type: ${typeLabels[typeCode] || typeCode}`));
           
           traces.push({
             type: 'surface',
-            x: K_dc_s_values,
-            y: K_dc_b,
+            x: K_dc_b, // Swap x and y axes definitions to match the transposed data
+            y: K_dc_s_values,
             z: zHeight,
             surfacecolor: surfaceColor,
             text: hoverText,
@@ -340,23 +346,29 @@ const GraphDisplay: React.FC<{
         const kscIdx = Number(selectedKscIndex);
         const fixedKsc = K_sc[kscIdx];
         
-        // Correctly build gridData[dcbIdx][kdcsIdx]
-        // This ensures rows are K_dc_b (Y) and columns are K_dc_s (X)
-        const gridData = K_dc_b.map((_: any, dcbIdx: number) => {
-          return K_dc_s_values.map((_: any, kdcsIdx: number) => {
+        // Transpose grid generation [kdcs][dcb] (x,y)
+        const gridData = K_dc_s_values.map((_: any, kdcsIdx: number) => {
+          return K_dc_b.map((_: any, dcbIdx: number) => {
             return currentNode.matrices[String(kdcsIdx)][krcIdx][kscIdx][dcbIdx];
           });
         });
         
-        const surfaceColor = gridData.map((row: string[]) => row.map((v: string) => (typeToNum[String(v)] ?? NaN)));
-        const zGrid = gridData.map(() => K_dc_s_values.map(() => fixedKsc));
+        // Use a specific mapping for 3D to invert Batch/Stream colors as requested
+        const typeToNum3D: Record<string, number> = { sc: 0, dcs: 2, dcb: 1 };
+        
+        const surfaceColor = gridData.map((row: string[]) => row.map((v: string) => (typeToNum3D[String(v)] ?? NaN)));
+        const zGrid = gridData.map(() => K_dc_b.map(() => fixedKsc));
         // Create hover text with the same structure
-        const hoverText = gridData.map((row: string[], dcbIdx: number) => row.map((typeCode: string, kdcsIdx: number) => `K_dc_s: ${K_dc_s_values[kdcsIdx]}<br>K_dc_b: ${K_dc_b[dcbIdx]}<br>K_sc: ${fixedKsc}<br>Type: ${typeLabels[typeCode] || typeCode}`));
+        const hoverText = gridData.map((row: string[], kdcsIdx: number) => row.map((typeCode: string, dcbIdx: number) => 
+          `K_dc_s: ${K_dc_s_values[kdcsIdx]}
+        <br>K_dc_b: ${K_dc_b[dcbIdx]}<br>
+        K_sc: ${fixedKsc}<br>
+        Type: ${typeLabels[typeCode] || typeCode}`));
         
         traces.push({
           type: 'surface',
-          x: K_dc_s_values,
-          y: K_dc_b,
+          x: K_dc_b, // Swap x and y axes definitions
+          y: K_dc_s_values,
           z: zGrid,
           surfacecolor: surfaceColor,
           text: hoverText,
@@ -984,8 +996,8 @@ const GraphDisplay: React.FC<{
                         // Extract values based on view mode
                         if (viewMode === '3d') {
                           // point.x = K_dc_s, point.y = K_dc_b, point.z = K_sc
-                          clickedKdcs = point.y;
-                          clickedKdcb = point.x;
+                          clickedKdcs = point.x;
+                          clickedKdcb = point.y;
                           clickedKsc = point.z;
                           
                           // Find closest values in arrays (to handle floating point precision)
