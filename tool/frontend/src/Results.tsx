@@ -567,36 +567,53 @@ const GraphDisplay: React.FC<{
       {selectedNodeIndex !== null && currentNode && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', zIndex: 9999 }}>
           <div style={{ width: '85vw', height: '85vh', background: '#fff', borderRadius: 8, overflow: 'auto', padding: 16, boxShadow: '0 8px 40px rgba(0,0,0,0.3)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              {/* Prefer the node name from the original graph JSON; fall back to analysis node.name or id */}
-              <h3 style={{ margin: 0 }}>
-                Node analysis: {(() => {
-                  if (!currentNode) return '';
-                  // try to find the name in the original graph (graph.nodes)
-                  const gnodes = (graph && graph.nodes) || [];
-                  const match = gnodes.find((n: any) => n.id === currentNode.id);
-                  return match?.name ?? currentNode.name ?? currentNode.id;
-                })()}
-              </h3>
-              <div>
-                <button onClick={() => setPublicationViewOpen(true)} style={{ ...commonButtonStyle, marginRight: 8 }}>
+            <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 320, display: 'flex', justifyContent: 'center' }}>
+                <button onClick={() => setPublicationViewOpen(true)} style={{ ...commonButtonStyle }}>
                   Advanced Grid View
                 </button>
+              </div>
+              {/* Prefer the node name from the original graph JSON; fall back to analysis node.name or id */}
+              <h3 style={{ margin: 0, textAlign: 'center' }}>
+                <div>Node Analysis</div>
+                <div style={{ fontSize: '0.9em', fontWeight: 'normal' }}>
+                  {(() => {
+                    if (!currentNode) return '';
+                    // try to find the name in the original graph (graph.nodes)
+                    const gnodes = (graph && graph.nodes) || [];
+                    const match = gnodes.find((n: any) => n.id === currentNode.id);
+                    return match?.name ?? currentNode.name ?? currentNode.id;
+                  })()}
+                </div>
+              </h3>
+              <div style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}>
                 <button onClick={() => setSelectedNodeIndex(null)} style={{ ...commonButtonStyle, marginRight: 8 }}>Close</button>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
-              <div style={{ width: 320, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
+              <div style={{ width: 320, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                <div style={{ padding: 12, borderRadius: 8, background: '#fff', border: '1px solid #e0e0e0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                  <details>
+                    <summary style={{ fontWeight: 700, cursor: 'pointer', color: '#2c3e50' }}>Node parameters</summary>
+                    <pre style={{ background: '#f4f4f4', padding: 8, marginTop: 8, maxHeight: 220, overflow: 'auto', borderRadius: 4, border: '1px solid #eee' }}>{JSON.stringify(currentNode.node_params, null, 2)}</pre>
+                  </details>
+                </div>
+
+                <div style={{ marginTop: 12, padding: 12, borderRadius: 8, background: '#fff', border: '1px solid #e0e0e0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                   <details open>
-                    <summary style={{ fontWeight: 700, cursor: 'pointer' }}>Node parameters</summary>
-                    <pre style={{ background: '#f4f4f4', padding: 8, marginTop: 8, maxHeight: 220, overflow: 'auto' }}>{JSON.stringify(currentNode.node_params, null, 2)}</pre>
+                    <summary style={{ fontWeight: 700, cursor: 'pointer', color: '#2c3e50' }}>Costs Coefficients</summary>
+                    <div style={{ marginTop: 10, fontSize: '13px', color: '#444', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div><strong style={{ color: '#000' }}>K_rc</strong>: Retrieval cost State-Centric coefficient</div>
+                      <div><strong style={{ color: '#000' }}>K_sc</strong>: Computational cost State-Centric coefficient</div>
+                      <div><strong style={{ color: '#000' }}>K_dc_b</strong>: Computational cost Data-Centric Batch coefficient</div>
+                      <div><strong style={{ color: '#000' }}>K_dc_s</strong>: Computational cost Data-Centric Stream coefficient</div>
+                    </div>
                   </details>
                 </div>
 
                 {/* Bottom-left anchored controls: K_rc slider, K_sc slice select, actions */}
                 <div style={{ marginTop: 12 }}>
-                  <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: '#fafafa', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.03)' }}>
+                  <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: '#e8f4fd', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.03)' }}>
                     <label style={{ display: 'block', fontWeight: 700, marginBottom: 6 }}>State-centric retrieval cost (K_rc)</label>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <button
@@ -629,7 +646,7 @@ const GraphDisplay: React.FC<{
                     <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>Use the buttons or the slider to choose the state-centric retrieval cost. Available values: {currentNode.K_rc_slice_values.join(', ')}</div>
                   </div>
 
-                  <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: '#fafafa', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.03)' }}>
+                  <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: '#e8f4fd', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.03)' }}>
                     <label style={{ display: 'block', fontWeight: 700, marginBottom: 6 }}>State-centric cost (K_sc) — slice</label>
                     <div>
                       <select value={selectedKscIndex} onChange={(e) => setSelectedKscIndex(e.target.value === 'all' ? 'all' : Number(e.target.value))} style={{ width: '100%', padding: '6px 8px' }} disabled={viewMode !== '3d'}>
@@ -645,7 +662,10 @@ const GraphDisplay: React.FC<{
                   </div>
 
                   <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: '#e8f4fd', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.03)' }}>
-                    <label style={{ display: 'block', fontWeight: 700, marginBottom: 6 }}>View Mode</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <label style={{ fontWeight: 700 }}>View Mode</label>
+                      <button onClick={() => { setSelectedKrcIndex(1); setSelectedKscIndex('all'); setViewMode('3d'); }} style={{ ...commonButtonStyle, padding: '4px 8px', fontSize: '11px' }}>Reset</button>
+                    </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
                         <input 
@@ -735,11 +755,6 @@ const GraphDisplay: React.FC<{
                         </div>
                       </div>
                     )}
-                  </div>
-
-                  <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
-                    <button onClick={() => { navigator.clipboard?.writeText(JSON.stringify(currentNode)) }} style={{ ...commonButtonStyle, padding: '8px 10px' }}>Copy node data</button>
-                    <button onClick={() => { setSelectedKrcIndex(1); setSelectedKscIndex('all'); setViewMode('3d'); }} style={{ ...commonButtonStyle, padding: '8px 10px' }}>Reset</button>
                   </div>
                 </div>
               </div>
@@ -920,7 +935,7 @@ const GraphDisplay: React.FC<{
                       </div>
 
                       {/* Fixed K selector + evaluation - vertical layout */}
-                      <div style={{ background: 'rgba(255,248,240,0.98)', padding: 12, borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', minWidth: 200 }}>
+                      <div style={{ background: '#e8f4fd', padding: 12, borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', minWidth: 200 }}>
                         <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Evaluate fixed K point</div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                           <label style={{ fontSize: 12 }}>K_sc
