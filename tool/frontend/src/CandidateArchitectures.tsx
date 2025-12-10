@@ -16,7 +16,7 @@ const PALETTE = {
 };
 
 const Legend: React.FC = () => (
-    <div style={{ display: 'flex', flexDirection: 'row', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', padding: '16px', borderRadius: 8, background: '#fff', border: '1px solid #eee', marginBottom: '24px', fontSize: '1.8rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', padding: '16px', borderRadius: 8, background: '#fff', border: '1px solid #eee', marginBottom: '24px', fontSize: '1.2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 24, height: 16, background: PALETTE.sc, border: '1px solid #888', borderRadius: 3 }} />
             <div>State-Centric</div>
@@ -32,6 +32,20 @@ const Legend: React.FC = () => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 24, height: 16, background: PALETTE.default, border: '1px solid #888', borderRadius: 3 }} />
             <div>Producer / Consumer</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ width: 24, height: 2, background: '#b1b1b7' }} />
+                <div style={{ width: 0, height: 0, borderTop: '4px solid transparent', borderBottom: '4px solid transparent', borderLeft: '6px solid #b1b1b7' }} />
+            </div>
+            <div>Volatile Link</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ width: 24, height: 4, background: 'green' }} />
+                <div style={{ width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '8px solid green' }} />
+            </div>
+            <div>Persistent Link</div>
         </div>
     </div>
 );
@@ -143,14 +157,40 @@ const GraphDisplay: React.FC<{ graph: { nodes: GraphNode[]; edges: GraphEdge[] }
         </div>
     );};
 
+const DEFINITIONS: Record<string, { def: string; examples: string }> = {
+    'Data Processing System with Job Deployment': {
+        def: 'Systems designed to aggregate data and process it in large volumes. They execute finite data processing jobs.',
+        examples: 'Apache Spark, Hadoop MapReduce'
+    },
+    'Data Processing System with Task Deployment': {
+        def: 'Systems designed for continuous, low-latency computation on data in motion.',
+        examples: 'Apache Flink, Apache Storm, Spark Streaming'
+    },
+    'Data Management System': {
+        def: 'Systems whose primary role is data persistence and retrieval. The selection of specific sub-categories depends on the data structure (e.g., relational for structured data, NoSQL for semi-structured/unstructured).',
+        examples: 'CockroachDB, Google Spanner, MongoDB, Redis, Cassandra'
+    },
+    'Data Storage System': {
+        def: 'Systems that provide durable storage for in-transit data, enabling data persistence between architectural stages.',
+        examples: 'Apache Kafka, HDFS'
+    },
+    'N/A (Communication Channel)': {
+        def: 'A direct communication channel (e.g., TCP connection, API call) that connects two systems without intermediate storage or processing.',
+        examples: 'TCP connection, API call'
+    }
+};
 
-const MappingTable: React.FC = () => (
+const MappingTable: React.FC = () => {
+    const [hoveredCategory, setHoveredCategory] = React.useState<string | null>(null);
+    const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+
+    return (
     <div style={{ 
         background: '#fff', 
         border: '1px solid #eee', 
         borderRadius: 8, 
         padding: '16px', 
-        width: '350px', 
+        width: '550px', 
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         alignSelf: 'flex-start',
         marginTop: '16px'
@@ -177,13 +217,45 @@ const MappingTable: React.FC = () => (
                 ].map(([adl, cat], i) => (
                     <tr key={i} style={{ borderBottom: i === 4 ? 'none' : '1px solid #f0f0f0' }}>
                         <td style={{ padding: '8px', fontWeight: 600, color: '#333' }}>{adl}</td>
-                        <td style={{ padding: '8px', color: '#555' }}>{cat}</td>
+                        <td 
+                            style={{ padding: '8px', color: '#555', cursor: 'help', position: 'relative' }}
+                            onMouseEnter={(e) => {
+                                setHoveredCategory(cat);
+                                setMousePos({ x: e.clientX, y: e.clientY });
+                            }}
+                            onMouseMove={(e) => {
+                                setMousePos({ x: e.clientX, y: e.clientY });
+                            }}
+                            onMouseLeave={() => setHoveredCategory(null)}
+                        >
+                            {cat}
+                        </td>
                     </tr>
                 ))}
             </tbody>
         </table>
+        {hoveredCategory && DEFINITIONS[hoveredCategory] && (
+            <div style={{
+                position: 'fixed',
+                top: mousePos.y + 15,
+                left: mousePos.x + 15,
+                background: 'white',
+                border: '1px solid #ccc',
+                padding: '12px',
+                borderRadius: '6px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 10000,
+                maxWidth: '300px',
+                fontSize: '0.85rem',
+                pointerEvents: 'none'
+            }}>
+                <div style={{ marginBottom: '6px', fontWeight: 600, color: '#333' }}>{hoveredCategory}</div>
+                <div style={{ marginBottom: '8px', lineHeight: '1.4' }}>{DEFINITIONS[hoveredCategory].def}</div>
+                <div style={{ color: '#666', fontStyle: 'italic' }}>Examples: {DEFINITIONS[hoveredCategory].examples}</div>
+            </div>
+        )}
     </div>
-);
+);};
 
 // --- Main Page Component ---
 
