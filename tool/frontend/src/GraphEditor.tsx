@@ -126,10 +126,12 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
   const [showNodeModal, setShowNodeModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
 
   // Edge modal state
   const [showEdgeModal, setShowEdgeModal] = useState(false);
   const [pendingEdge, setPendingEdge] = useState<Edge | null>(null);
+  const [editingEdgeId, setEditingEdgeId] = useState<string | null>(null);
 
   // Edge form data
   const [edgeFrequency, setEdgeFrequency] = useState('');
@@ -145,11 +147,13 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
     setDataCompCost(null);
     setStateRetCost(null);
     setErrorMessage('');
+    setEditingNodeId(null);
   };
 
   const resetEdgeForm = () => {
     setEdgeFrequency('');
     setEdgeDataItem('');
+    setEditingEdgeId(null);
   };
 
   const openModalForType = (type: ModalType) => {
@@ -157,6 +161,25 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
     setModalType(type);
     setShowNodeModal(true);
   };
+
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node<NodeData>) => {
+    setEditingNodeId(node.id);
+    setModalType(node.data.type);
+    setNodeName(node.data.name);
+    setDeliveryGuarantee(node.data.deliveryGuarantee);
+    setInputCardinality(node.data.inputCardinality);
+    setOutputCardinality(node.data.outputCardinality);
+    setShowNodeModal(true);
+  }, []);
+
+  const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    setEditingEdgeId(edge.id);
+    setEdgeFrequency(edge.data?.frequency?.toString() || '');
+    setEdgeDataItem(edge.data?.dataItem || '');
+    setPendingEdge(edge); 
+    setShowEdgeModal(true);
+  }, []);
+
 
   const clearGraph = useCallback(() => {
     const ok = window.confirm('Clear the graph? This will remove all nodes and edges.');
@@ -170,7 +193,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
   const closeNodeModal = () => {
     setShowNodeModal(false);
-    setErrorMessage('');
+    resetForm();
   };
 
   const isNameUnique = (name: string) => {
@@ -184,7 +207,12 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       setErrorMessage('Il nome è obbligatorio');
       return;
     }
-    if (!isNameUnique(nodeName.trim())) {
+    
+    const isNameChanged = editingNodeId 
+      ? nodes.find(n => n.id === editingNodeId)?.data.name !== nodeName.trim()
+      : true;
+
+    if (isNameChanged && !isNameUnique(nodeName.trim())) {
       setErrorMessage('Il nome deve essere univoco');
       return;
     }
@@ -194,36 +222,53 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       return;
     }
 
-    let newNode: Node<NodeData>;
+    if (editingNodeId) {
+      setNodes((nds) => nds.map((node) => {
+        if (node.id === editingNodeId) {
+          const newData = {
+            ...node.data,
+            name: nodeName.trim(),
+            deliveryGuarantee,
+            inputCardinality,
+            outputCardinality,
+          };
+          newData.label = createLabel(newData);
+          return { ...node, data: newData };
+        }
+        return node;
+      }));
+    } else {
+      let newNode: Node<NodeData>;
 
-    switch (modalType) {
-      case 'active_p':
-      case 'passive_p':
-        newNode = createNode(modalType, generateUniqueId(), nodeName.trim(), null, null, null, null, null, null);
-        break;
-      case 'pull_c':
-      case 'push_c':
-        newNode = createNode(modalType, generateUniqueId(), nodeName.trim(), deliveryGuarantee, null, null, null, null, null);
-        break;
-      case 'merge':
-      case 'processing':
-        newNode = createNode(
-          modalType,
-          generateUniqueId(),
-          nodeName.trim(),
-          null,
-          inputCardinality,
-          outputCardinality,
-          null,
-          null,
-          null
-        );
-        break;
-      default:
-        return;
+      switch (modalType) {
+        case 'active_p':
+        case 'passive_p':
+          newNode = createNode(modalType, generateUniqueId(), nodeName.trim(), null, null, null, null, null, null);
+          break;
+        case 'pull_c':
+        case 'push_c':
+          newNode = createNode(modalType, generateUniqueId(), nodeName.trim(), deliveryGuarantee, null, null, null, null, null);
+          break;
+        case 'merge':
+        case 'processing':
+          newNode = createNode(
+            modalType,
+            generateUniqueId(),
+            nodeName.trim(),
+            null,
+            inputCardinality,
+            outputCardinality,
+            null,
+            null,
+            null
+          );
+          break;
+        default:
+          return;
+      }
+      setNodes((nds) => [...nds, newNode]);
     }
 
-    setNodes((nds) => [...nds, newNode]);
     closeNodeModal();
   };
 
@@ -241,26 +286,44 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
         return;
       }
       const labelText = `${edgeFrequency || '-'} , ${edgeDataItem}`;
-      const newEdge: Edge = {
-        ...pendingEdge,
-        data: {
-          // store frequency as a number in the edge data
-          frequency: Number(edgeFrequency),
-          dataItem: edgeDataItem,
-        },
-        label: labelText,
-        labelStyle: {
-          fill: '#333',
-          fontWeight: '500',
-          fontSize: 12,
-        },
-        labelBgStyle: {
-          fill: 'rgba(255, 255, 255, 0.9)',
-          padding: '2px 4px',
-          borderRadius: 4,
-        }
-      };
-      setEdges((eds) => [...eds, newEdge]);
+      
+      if (editingEdgeId) {
+        setEdges((eds) => eds.map((e) => {
+          if (e.id === editingEdgeId) {
+            return {
+              ...e,
+              data: {
+                frequency: Number(edgeFrequency),
+                dataItem: edgeDataItem,
+              },
+              label: labelText,
+            };
+          }
+          return e;
+        }));
+      } else {
+        const newEdge: Edge = {
+          ...pendingEdge,
+          data: {
+            // store frequency as a number in the edge data
+            frequency: Number(edgeFrequency),
+            dataItem: edgeDataItem,
+          },
+          label: labelText,
+          labelStyle: {
+            fill: '#333',
+            fontWeight: '500',
+            fontSize: 12,
+          },
+          labelBgStyle: {
+            fill: 'rgba(255, 255, 255, 0.9)',
+            padding: '2px 4px',
+            borderRadius: 4,
+          }
+        };
+        setEdges((eds) => [...eds, newEdge]);
+      }
+      
       setPendingEdge(null);
       resetEdgeForm();
       setShowEdgeModal(false);
@@ -293,7 +356,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
           null
         );
         // keep provided position if available
-        if (n.position) node.position = n.position;
+        // if (n.position) node.position = n.position; // Force auto-layout
         return node;
       });
 
@@ -303,12 +366,11 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       const actions = loadedNodes.filter((nd: any) => nd.data.type === 'processing' || nd.data.type === 'merge');
       const consumers = loadedNodes.filter((nd: any) => nd.data.type === 'pull_c' || nd.data.type === 'push_c');
 
-      const spacingY = 80;
+      const spacingY = 150;
       const makePositions = (list: any[], xBase: number) => {
-        const total = list.length;
         return list.map((n: any, i: number) => ({
           id: n.id,
-          position: { x: xBase, y: (i - (total - 1) / 2) * spacingY + 130 },
+          position: { x: xBase, y: i * spacingY + 50 },
         }));
       };
 
@@ -319,12 +381,10 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       const posMap: Record<string, { x: number; y: number }> = {};
       [...pPos, ...aPos, ...cPos].forEach((p) => { posMap[p.id] = p.position; });
 
-      // Apply positions to loadedNodes unless original node JSON provided an explicit position
+      // Apply positions to loadedNodes
       loadedNodes.forEach((nd: any) => {
-        if (!nd.position || Object.keys(nd.position).length === 0) {
           const p = posMap[nd.id];
           if (p) nd.position = p;
-        }
       });
 
       const loadedEdges = inEdges.map((e: any) => {
@@ -528,6 +588,8 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={onNodeClick}
+        onEdgeClick={onEdgeClick}
         fitView
         attributionPosition="bottom-left"
         connectionLineStyle={{ stroke: '#007bff', strokeWidth: 2 }}
@@ -541,7 +603,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       {showNodeModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Add {modalType ? getTypeName(modalType) : ''} Node</h3>
+            <h3>{editingNodeId ? 'Edit' : 'Add'} {modalType ? getTypeName(modalType) : ''} Node</h3>
             <div className="form-group">
               <label>Name:</label>
               <input type="text" value={nodeName} onChange={(e) => setNodeName(e.target.value)} />
@@ -600,7 +662,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       {showEdgeModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Edge Data</h3>
+            <h3>{editingEdgeId ? 'Edit' : 'Add'} Edge Data</h3>
             <div className="form-group">
               <label>Frequency:</label>
               <input
