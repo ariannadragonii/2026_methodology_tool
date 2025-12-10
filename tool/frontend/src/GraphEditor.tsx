@@ -17,6 +17,7 @@ export type GraphEditorHandle = {
   loadGraphFromJSON: (json: string) => void;
   openModalForType: (type: NodeType) => void;
   clearGraph: () => void;
+  validateGraph: () => boolean;
 };
 
 type SerializedGraph = {
@@ -134,7 +135,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
   const [editingEdgeId, setEditingEdgeId] = useState<string | null>(null);
 
   // Edge form data
-  const [edgeFrequency, setEdgeFrequency] = useState('');
+  const [edgePeriod, setEdgePeriod] = useState('');
   const [edgeDataItem, setEdgeDataItem] = useState<'structured' | 'unstructured' | 'semistructured' | ''>('');
   const [edgeErrorMessage, setEdgeErrorMessage] = useState('');
 
@@ -151,7 +152,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
   };
 
   const resetEdgeForm = () => {
-    setEdgeFrequency('');
+    setEdgePeriod('');
     setEdgeDataItem('');
     setEditingEdgeId(null);
   };
@@ -162,7 +163,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
     setShowNodeModal(true);
   };
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: Node<NodeData>) => {
+  const onNodeDoubleClick = useCallback((event: React.MouseEvent, node: Node<NodeData>) => {
     setEditingNodeId(node.id);
     setModalType(node.data.type);
     setNodeName(node.data.name);
@@ -174,7 +175,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
   const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
     setEditingEdgeId(edge.id);
-    setEdgeFrequency(edge.data?.frequency?.toString() || '');
+    setEdgePeriod(edge.data?.frequency?.toString() || '');
     setEdgeDataItem(edge.data?.dataItem || '');
     setPendingEdge(edge); 
     setShowEdgeModal(true);
@@ -204,7 +205,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
     if (!modalType) return;
 
     if (!nodeName.trim()) {
-      setErrorMessage('Il nome è obbligatorio');
+      setErrorMessage('Name is required');
       return;
     }
     
@@ -213,12 +214,12 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       : true;
 
     if (isNameChanged && !isNameUnique(nodeName.trim())) {
-      setErrorMessage('Il nome deve essere univoco');
+      setErrorMessage('Name must be unique');
       return;
     }
 
     if ((modalType === 'pull_c' || modalType === 'push_c') && !deliveryGuarantee) {
-      setErrorMessage('Devi scegliere una delivery guarantee');
+      setErrorMessage('You must choose a delivery guarantee');
       return;
     }
 
@@ -276,16 +277,16 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
     if (pendingEdge) {
       // validate data item type
       if (!edgeDataItem) {
-        setEdgeErrorMessage("Devi selezionare il Data Item Type per l'arco");
+        setEdgeErrorMessage("You must select the Data Item Type for the edge");
         return;
       }
-      // validate frequency is present and a positive number
-      const freqVal = Number(edgeFrequency);
-      if (edgeFrequency === '' || Number.isNaN(freqVal) || freqVal < 0) {
-        setEdgeErrorMessage('Devi inserire una Frequency valida (numero >= 0)');
+      // validate period is present and a positive number
+      const freqVal = Number(edgePeriod);
+      if (edgePeriod === '' || Number.isNaN(freqVal) || freqVal < 0) {
+        setEdgeErrorMessage('You must enter a valid Period (number >= 0)');
         return;
       }
-      const labelText = `${edgeFrequency || '-'} , ${edgeDataItem}`;
+      const labelText = `${edgePeriod || '-'} , ${edgeDataItem}`;
       
       if (editingEdgeId) {
         setEdges((eds) => eds.map((e) => {
@@ -293,7 +294,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
             return {
               ...e,
               data: {
-                frequency: Number(edgeFrequency),
+                frequency: Number(edgePeriod),
                 dataItem: edgeDataItem,
               },
               label: labelText,
@@ -306,7 +307,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
           ...pendingEdge,
           data: {
             // store frequency as a number in the edge data
-            frequency: Number(edgeFrequency),
+            frequency: Number(edgePeriod),
             dataItem: edgeDataItem,
           },
           label: labelText,
@@ -441,12 +442,58 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
     return exportGraphToJSON();
   };
 
+  const validateGraph = useCallback(() => {
+    for (const node of nodes) {
+      const incoming = edges.filter(e => e.target === node.id);
+      const outgoing = edges.filter(e => e.source === node.id);
+
+      if (node.data.type === 'merge') {
+        if (incoming.length < 2) {
+          setErrorMessage(`Merge node "${node.data.name}" must have at least 2 incoming edges.`);
+          return false;
+        }
+        if (outgoing.length < 1) {
+          setErrorMessage(`Merge node "${node.data.name}" must have at least 1 outgoing edge.`);
+          return false;
+        }
+      }
+      
+      if (node.data.type === 'processing') {
+        if (incoming.length !== 1) {
+          setErrorMessage(`Processing node "${node.data.name}" must have exactly 1 incoming edge.`);
+          return false;
+        }
+        if (outgoing.length < 1) {
+          setErrorMessage(`Processing node "${node.data.name}" must have at least 1 outgoing edge.`);
+          return false;
+        }
+      }
+
+      if (node.data.type === 'active_p' || node.data.type === 'passive_p') {
+          if (outgoing.length < 1) {
+              setErrorMessage(`Producer node "${node.data.name}" must have at least 1 outgoing edge.`);
+              return false;
+          }
+      }
+
+      if (node.data.type === 'pull_c' || node.data.type === 'push_c') {
+          if (incoming.length < 1) {
+              setErrorMessage(`Consumer node "${node.data.name}" must have at least 1 incoming edge.`);
+              return false;
+          }
+      }
+    }
+    setErrorMessage('');
+    return true;
+  }, [nodes, edges]);
+
   useImperativeHandle(ref, () => ({
     downloadJSON,
     getGraphJSON,
     loadGraphFromJSON,
     openModalForType,
     clearGraph,
+    validateGraph,
   }));
 
   useEffect(() => {
@@ -588,7 +635,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={onNodeClick}
+        onNodeDoubleClick={onNodeDoubleClick}
         onEdgeClick={onEdgeClick}
         fitView
         attributionPosition="bottom-left"
@@ -664,11 +711,11 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
           <div className="modal-content">
             <h3>{editingEdgeId ? 'Edit' : 'Add'} Edge Data</h3>
             <div className="form-group">
-              <label>Frequency:</label>
+              <label>Period:</label>
               <input
                 type="text"
-                value={edgeFrequency}
-                onChange={(e) => setEdgeFrequency(e.target.value)}
+                value={edgePeriod}
+                onChange={(e) => setEdgePeriod(e.target.value)}
               />
             </div>
             <div className="form-group">

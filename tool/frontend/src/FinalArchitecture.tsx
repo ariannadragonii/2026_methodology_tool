@@ -158,7 +158,7 @@ const FinalArchitecture = () => {
 					id: edge.id,
 					source: edge.source,
 					target: edge.target,
-					label: `Data: ${edge.data?.dataItem || 'N/A'}, Frequency: ${edge.data?.frequency || 'N/A'}`,
+					label: `Data: ${edge.data?.dataItem || 'N/A'}, Period: ${edge.data?.frequency || 'N/A'}`,
 					type: isPersistent ? 'persistent' : 'volatile',
 					markerEnd: {
 						type: MarkerType.ArrowClosed,

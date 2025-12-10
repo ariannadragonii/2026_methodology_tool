@@ -3,6 +3,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactFlow, { MiniMap, Controls, Background, useNodesState, useEdgesState } from 'reactflow';
 import 'reactflow/dist/style.css';
+import './App.css';
 // import Plotly component (require used to avoid missing type declarations in this project)
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const _plotModule = require('react-plotly.js');
@@ -1397,14 +1398,8 @@ const Results: React.FC = () => {
         <div style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: 12 }}>
           <button
             onClick={handleGenerateCandidates}
-            style={{
-              ...commonButtonStyle,
-              padding: '10px 15px',
-              fontSize: '16px',
-              backgroundColor: '#ff9800',
-              color: 'white',
-              border: 'none',
-            }}
+            className="export-button"
+            style={{ width: 'auto' }}
           >
             Generate Candidate Architectures
           </button>

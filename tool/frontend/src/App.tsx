@@ -6,7 +6,9 @@ function App() {
   const graphEditorRef = useRef<GraphEditorHandle>(null);
 
   const handleExportClick = () => {
-    graphEditorRef.current?.downloadJSON();
+    if (graphEditorRef.current?.validateGraph()) {
+      graphEditorRef.current?.downloadJSON();
+    }
   };
 
   const handleAddNode = (type: NodeType) => {
@@ -68,6 +70,8 @@ function App() {
   const navigate = useNavigate();
 
   const handleElaborateClick = async () => {
+    if (!graphEditorRef.current?.validateGraph()) return;
+
     const jsonStr = graphEditorRef.current?.getGraphJSON();
     if (!jsonStr) return;
 
@@ -128,8 +132,8 @@ function App() {
             <button onClick={() => handleAddNode('passive_p')}>Add Passive Producer</button>
             <button onClick={() => handleAddNode('pull_c')}>Add Pull Consumer</button>
             <button onClick={() => handleAddNode('push_c')}>Add Push Consumer</button>
-            <button onClick={() => handleAddNode('merge')}>Add Merge</button>
-            <button onClick={() => handleAddNode('processing')}>Add Processing</button>
+            <button onClick={() => handleAddNode('merge')}>Add Merge Action</button>
+            <button onClick={() => handleAddNode('processing')}>Add Processing Action</button>
             <button onClick={handleClearGraph} className="clear-button">Clear Graph</button>
           </div>
         </div>
@@ -176,8 +180,10 @@ function App() {
       </div>
       <div className="main-content">
         <GraphEditor ref={graphEditorRef} />
-        <div className="rules-container">
-          <h2>Rules</h2>
+      </div>
+      <div className="sidebar right-sidebar">
+        <h2 className="sidebar-title">Rules</h2>
+        <div className="rules-list">
           <ul>
             {rules.map((rule, index) => (
               <li key={index}>{rule}</li>
