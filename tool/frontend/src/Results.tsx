@@ -8,6 +8,19 @@ import 'reactflow/dist/style.css';
 const _plotModule = require('react-plotly.js');
 const Plot = (_plotModule && _plotModule.default) ? _plotModule.default : _plotModule;
 
+const commonButtonStyle: React.CSSProperties = {
+  padding: '8px 12px', 
+  fontSize: '13px', 
+  backgroundColor: '#fff', 
+  border: '1px solid #ccc', 
+  borderRadius: 6, 
+  cursor: 'pointer',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+  fontWeight: 600,
+  color: '#333',
+  transition: 'all 0.2s ease'
+};
+
 const Legend: React.FC = () => (
   <div style={{ borderBottom: '1px solid #eee', paddingBottom: 12, marginBottom: 12, textAlign: 'center' }}>
     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
@@ -566,10 +579,10 @@ const GraphDisplay: React.FC<{
                 })()}
               </h3>
               <div>
-                <button onClick={() => setPublicationViewOpen(true)} style={{ marginRight: 8, padding: '8px 12px', fontSize: '14px' }}>
-                  Generate Publication Figure
+                <button onClick={() => setPublicationViewOpen(true)} style={{ ...commonButtonStyle, marginRight: 8 }}>
+                  Advanced Grid View
                 </button>
-                <button onClick={() => setSelectedNodeIndex(null)} style={{ marginRight: 8 }}>Close</button>
+                <button onClick={() => setSelectedNodeIndex(null)} style={{ ...commonButtonStyle, marginRight: 8 }}>Close</button>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -590,7 +603,7 @@ const GraphDisplay: React.FC<{
                         onClick={() => setSelectedKrcIndex(Math.max(0, selectedKrcIndex - 1))}
                         disabled={selectedKrcIndex <= 0}
                         aria-label="decrement"
-                        style={{ width: 32, height: 32 }}
+                        style={{ ...commonButtonStyle, width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >−</button>
 
                       <input
@@ -607,7 +620,7 @@ const GraphDisplay: React.FC<{
                         onClick={() => setSelectedKrcIndex(Math.min(currentNode.K_rc_slice_values.length - 1, selectedKrcIndex + 1))}
                         disabled={selectedKrcIndex >= currentNode.K_rc_slice_values.length - 1}
                         aria-label="increment"
-                        style={{ width: 32, height: 32 }}
+                        style={{ ...commonButtonStyle, width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >+</button>
                     </div>
                     <div style={{ fontSize: 13, color: '#333', marginTop: 8 }}>
@@ -725,8 +738,8 @@ const GraphDisplay: React.FC<{
                   </div>
 
                   <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
-                    <button onClick={() => { navigator.clipboard?.writeText(JSON.stringify(currentNode)) }} style={{ padding: '8px 10px' }}>Copy node data</button>
-                    <button onClick={() => { setSelectedKrcIndex(1); setSelectedKscIndex('all'); setViewMode('3d'); }} style={{ padding: '8px 10px' }}>Reset</button>
+                    <button onClick={() => { navigator.clipboard?.writeText(JSON.stringify(currentNode)) }} style={{ ...commonButtonStyle, padding: '8px 10px' }}>Copy node data</button>
+                    <button onClick={() => { setSelectedKrcIndex(1); setSelectedKscIndex('all'); setViewMode('3d'); }} style={{ ...commonButtonStyle, padding: '8px 10px' }}>Reset</button>
                   </div>
                 </div>
               </div>
@@ -739,6 +752,9 @@ const GraphDisplay: React.FC<{
                       layout={viewMode === '3d' ? {
                         autosize: true,
                         scene: {
+                            camera: {
+                              eye: { x: 1.8, y: 1.8, z: 1.8 }
+                            },
                             xaxis: { 
                               title: { text: 'K_dc_s' },
                               range: [0, 10]
@@ -752,7 +768,7 @@ const GraphDisplay: React.FC<{
                               range: [0, 10]
                             }
                           },
-                        margin: { l: 30, r: 200, t: 20, b: 60 },
+                        margin: { l: 30, r: 200, t: 10, b: 30 },
                         showlegend: false,
                       } : viewMode === '2d-fix-ksc' ? {
                         autosize: true,
@@ -962,7 +978,7 @@ const GraphDisplay: React.FC<{
                                   alert('Failed to evaluate point');
                                 }
                               }}
-                              style={{ padding: '6px 10px', fontSize: 12, flex: 1 }}
+                              style={{ ...commonButtonStyle, padding: '6px 10px', fontSize: 12, flex: 1 }}
                             >Evaluate</button>
                             <button
                               onClick={async () => {
@@ -978,7 +994,7 @@ const GraphDisplay: React.FC<{
                                 setSelectedNodeIndex(null);
                               }}
                               disabled={!fixedResult}
-                              style={{ padding: '6px 10px', fontSize: 12, flex: 1, opacity: fixedResult ? 1 : 0.5, cursor: fixedResult ? 'pointer' : 'not-allowed' }}
+                              style={{ ...commonButtonStyle, padding: '6px 10px', fontSize: 12, flex: 1, opacity: fixedResult ? 1 : 0.5, cursor: fixedResult ? 'pointer' : 'not-allowed' }}
                             >Select</button>
                           </div>
                           <div style={{ fontSize: 12 }}>
@@ -997,18 +1013,7 @@ const GraphDisplay: React.FC<{
                               setManualNodeColor(currentNode.id, '');
                               setSelectedNodeIndex(null);
                             }}
-                            style={{ 
-                              width: '100%',
-                              padding: '8px 12px', 
-                              fontSize: '13px', 
-                              backgroundColor: '#fff', 
-                              border: '1px solid #ccc', 
-                              borderRadius: 6, 
-                              cursor: 'pointer',
-                              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                              fontWeight: 600,
-                              color: '#333'
-                            }}
+                            style={{ ...commonButtonStyle, width: '100%' }}
                           >
                             Reset Color
                           </button>
@@ -1364,7 +1369,7 @@ const Results: React.FC = () => {
         <h2>Interactive Costs Comparison</h2>
         <div>
           <p>No analysis data found. Go back and try again.</p>
-          <button onClick={() => navigate(-1)}>Back</button>
+          <button onClick={() => navigate(-1)} style={commonButtonStyle}>Back</button>
         </div>
       </div>
     );
@@ -1378,13 +1383,12 @@ const Results: React.FC = () => {
           <button
             onClick={handleGenerateCandidates}
             style={{
+              ...commonButtonStyle,
               padding: '10px 15px',
               fontSize: '16px',
-              cursor: 'pointer',
               backgroundColor: '#ff9800',
               color: 'white',
               border: 'none',
-              borderRadius: '4px'
             }}
           >
             Generate Candidate Architectures

@@ -69,12 +69,23 @@ const PublicationFigure: React.FC<PublicationFigureProps> = ({ currentNode, onCl
         {/* Header */}
         <div style={{ padding: '12px 20px', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.4em' }}>Publication Figure Generator</h2>
+            <h2 style={{ margin: 0, fontSize: '1.4em' }}>Advanced Grid View</h2>
             <p style={{ margin: '4px 0 0', color: '#555' }}>
-              Configure the grid below. Use your system's screenshot tool to save the resulting figure.
+              This view displays a grid of 2D slices showing the optimal architecture type for varying data-centric costs (K_dc_s vs K_dc_b). Each cell in the grid corresponds to a specific combination of State-Centric cost (K_sc) and Retrieval cost (K_rc).
             </p>
           </div>
-          <button onClick={onClose} style={{ fontSize: '1em', padding: '8px 16px' }}>Close</button>
+          <button onClick={onClose} style={{ 
+            padding: '8px 16px', 
+            fontSize: '1em', 
+            backgroundColor: '#fff', 
+            border: '1px solid #ccc', 
+            borderRadius: 6, 
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            fontWeight: 600,
+            color: '#333',
+            transition: 'all 0.2s ease'
+          }}>Close</button>
         </div>
 
         {/* Main Content */}
