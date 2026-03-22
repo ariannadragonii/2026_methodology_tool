@@ -1,0 +1,57 @@
+{
+  "nodes": [
+    {
+      "id": "p1",
+      "type": "active_p",
+      "name": "Event Source"
+    },
+    {
+      "id": "n1",
+      "type": "processing",
+      "name": "Event Processing",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "id_89hpi9kqj",
+      "type": "push_c",
+      "name": "C1",
+      "deliveryGuarantee": "at most"
+    },
+    {
+      "id": "id_lmnf27cau",
+      "type": "pull_c",
+      "name": "C2",
+      "deliveryGuarantee": "at most"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "p1",
+      "target": "n1",
+      "data": {
+        "period": 0.1,
+        "dataItem": "semistructured"
+      }
+    },
+    {
+      "id": "id_7e6t3i9ih",
+      "source": "n1",
+      "target": "id_89hpi9kqj",
+      "data": {
+        "period": 0.01,
+        "dataItem": "semistructured"
+      }
+    },
+    {
+      "id": "id_0j92ynclr",
+      "source": "n1",
+      "target": "id_lmnf27cau",
+      "data": {
+        "period": 0.1,
+        "dataItem": "semistructured"
+      }
+    }
+  ]
+}

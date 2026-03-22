@@ -89,19 +89,19 @@ def combine_data_flows(json_scenario, json_dataflows):
 
                     # Link a processing to a state
                     out_links_processing = optimal_types_links[optimal_type]
-                    frequencies_dataItems = []
+                    periods_dataItems = []
                     for out_link_processing in out_links_processing:
                         edge = find_edge_between_nodes(graph_scenario, node_id, out_link_processing)
-                        frequency = edge['frequency']
+                        period = edge['period']
                         data_item = edge['dataItem']
-                        frequencies_dataItems.append((frequency, data_item))
+                        periods_dataItems.append((period, data_item))
 
-                    # For each different data item, keep the minimum frequency
-                    min_freq_per_item = {}
-                    for freq, item in frequencies_dataItems:
-                            if item not in min_freq_per_item or freq < min_freq_per_item[item][0]:
-                                min_freq_per_item[item] = (freq, item)
-                    filtered_tuples = list(min_freq_per_item.values())
+                    # For each different data item, keep the minimum period
+                    min_period_per_item = {}
+                    for period, item in periods_dataItems:
+                            if item not in min_period_per_item or period < min_period_per_item[item][0]:
+                                min_period_per_item[item] = (period, item)
+                    filtered_tuples = list(min_period_per_item.values())
 
                     for tuple in filtered_tuples:
                         add_link(graph_architecture, f"new_{node}", node_id, state_node_id, tuple[0], tuple[1], 'volatile' )
@@ -117,18 +117,18 @@ def combine_data_flows(json_scenario, json_dataflows):
                 for out_id in optimal_types_links['dcb']:
                     persistent_links.append((node_id, out_id))
                 out_links_processing = optimal_types_links['dcs']
-                frequencies_dataItems = []
+                periods_dataItems = []
                 for out_link_processing in out_links_processing:
                     edge = find_edge_between_nodes(graph_scenario, node_id, out_link_processing)
-                    frequency = edge['frequency']
+                    period = edge['period']
                     data_item = edge['dataItem']
-                    frequencies_dataItems.append((frequency, data_item))
+                    periods_dataItems.append((period, data_item))
 
-                min_freq_per_item = {}
-                for freq, item in frequencies_dataItems:
-                        if item not in min_freq_per_item or freq < min_freq_per_item[item][0]:
-                            min_freq_per_item[item] = (freq, item)
-                filtered_tuples = list(min_freq_per_item.values())
+                min_period_per_item = {}
+                for period, item in periods_dataItems:
+                        if item not in min_period_per_item or period < min_period_per_item[item][0]:
+                            min_period_per_item[item] = (period, item)
+                filtered_tuples = list(min_period_per_item.values())
 
                 for tuple in filtered_tuples:
                     add_link(graph_architecture, f"new_{node_id}", node_id, state_node_id, tuple[0], tuple[1], 'volatile' )
@@ -146,7 +146,7 @@ def combine_data_flows(json_scenario, json_dataflows):
         # Matches: "at least", "at least once", "exactly", "exactly once"
         if 'at least' in delivery or 'exactly' in delivery:
             # Find all producers that have a path to this consumer
-            producers = [n for n, d in graph_scenario.nodes(data=True) if d.get('type') in ['active_p', 'passive_p']]
+            producers = [n for n, d in graph_scenario.nodes(data=True) if d.get('type') in ['active_p']]
             print(f"DEBUG: Found {len(producers)} producers for consumer {consumer}")
             for producer in producers:
                 # Check if there's a path from this producer to this consumer
@@ -169,7 +169,7 @@ def combine_data_flows(json_scenario, json_dataflows):
         edge_id = edge['id']
         source_id = edge['source']
         dest_id = edge['target']
-        frequency = edge['data']['frequency']
+        period = edge['data']['period']
         data_item = edge['data']['dataItem']
 
         optimal_types_for_source = get_optimal_types(json_dataflows, source_id)
@@ -194,7 +194,7 @@ def combine_data_flows(json_scenario, json_dataflows):
         else:
             optimal_type = 'volatile'
 
-        add_link(graph_architecture, edge_id, start_id, dest_id, frequency, data_item, optimal_type)
+        add_link(graph_architecture, edge_id, start_id, dest_id, period, data_item, optimal_type)
         print(f"link from {start_id} to {dest_id} added with optimal_type = {optimal_type}!")
 
     # Pull consumers without state have persistent links
@@ -216,12 +216,9 @@ def combine_data_flows(json_scenario, json_dataflows):
 
         if archit_producer_attrs.get('type', '') == 'passive_p':
             for successor_id in graph_architecture.successors(archit_producer):
-
-                edge_attrs = graph_architecture.get_edge_data(archit_producer, successor_id)[key]
-                optimal_type = edge_attrs['optimalType']
-                print (f"prima = {edge_attrs['optimalType']}")
-                edge_attrs['optimalType'] = 'volatile'
-                print (f"dopo = {edge_attrs['optimalType']}")
+                for key in graph_architecture.get_edge_data(archit_producer, successor_id):
+                    edge_attrs = graph_architecture.get_edge_data(archit_producer, successor_id)[key]
+                    edge_attrs['optimalType'] = 'volatile'
 
     json = from_graph_architecture_to_json(graph_architecture)
     print(f"\n\n json = {json}")
@@ -272,12 +269,13 @@ def consolidate_optimal_types(optimal_types):
 
 def analyze_scenario(scenario_json, K_sc_values=None, K_dc_b_values=None, K_rc_slice_values=None, K_dc_s_values=None):
     values = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype=float)
+    rc_values = np.array([0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0], dtype=float)
     if K_sc_values is None:
         K_sc_values = values
     if K_dc_b_values is None:
         K_dc_b_values = values
     if K_rc_slice_values is None:
-        K_rc_slice_values = values
+        K_rc_slice_values = rc_values
     if K_dc_s_values is None:
         K_dc_s_values = values
 

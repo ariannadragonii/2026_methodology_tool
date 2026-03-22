@@ -65,7 +65,7 @@ interface GraphEdge {
     type: string;
     data?: {
         dataItem?: string;
-        frequency?: number;
+        period?: number;
     };
 }
 

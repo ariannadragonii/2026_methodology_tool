@@ -72,12 +72,12 @@ def add_component(architecture, node_id, node_name, node_type, input_cardinality
     
 
 # Adds a link to a architecture
-def add_link(scenario, id, left_node, right_node, frequency, dataItem, optimal_type):
+def add_link(scenario, id, left_node, right_node, period, dataItem, optimal_type):
     scenario.add_edge(
         left_node,
-        right_node, 
-        frequency = frequency, 
-        dataItem = dataItem, 
+        right_node,
+        period = period,
+        dataItem = dataItem,
         optimalType = optimal_type
         ) 
 
@@ -104,7 +104,7 @@ def from_graph_architecture_to_json(graph_architecture):
                 "target": v,
                 "type": attrs.get("optimalType", "volatile"),
                 "data": {
-                    "frequency": attrs.get("frequency"),
+                    "period": attrs.get("period"),
                     "dataItem": attrs.get("dataItem")
                 }
             }

@@ -1,0 +1,64 @@
+{
+  "nodes": [
+    {
+      "id": "id_z9y9z6igu",
+      "type": "pull_c",
+      "name": "Consumer_2",
+      "deliveryGuarantee": "at least"
+    },
+    {
+      "id": "id_sfvvvi87w",
+      "type": "active_p",
+      "name": "Producer_1"
+    },
+    {
+      "id": "id_khuoxajdk",
+      "type": "active_p",
+      "name": "Producer_2"
+    },
+    {
+      "id": "id_a84jlnopt",
+      "type": "pull_c",
+      "name": "Consumer_1",
+      "deliveryGuarantee": "at least"
+    }
+  ],
+  "edges": [
+    {
+      "id": "id_000mr3mja",
+      "source": "id_sfvvvi87w",
+      "target": "id_z9y9z6igu",
+      "data": {
+        "period": 0.001,
+        "dataItem": "unstructured"
+      }
+    },
+    {
+      "id": "id_p2zazbzrw",
+      "source": "id_sfvvvi87w",
+      "target": "id_a84jlnopt",
+      "data": {
+        "period": 0.001,
+        "dataItem": "unstructured"
+      }
+    },
+    {
+      "id": "id_b2o1pwotw",
+      "source": "id_khuoxajdk",
+      "target": "id_z9y9z6igu",
+      "data": {
+        "period": 1,
+        "dataItem": "unstructured"
+      }
+    },
+    {
+      "id": "id_w8as9xtqz",
+      "source": "id_khuoxajdk",
+      "target": "id_a84jlnopt",
+      "data": {
+        "period": 1,
+        "dataItem": "unstructured"
+      }
+    }
+  ]
+}

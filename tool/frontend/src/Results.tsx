@@ -226,7 +226,7 @@ const GraphDisplay: React.FC<{
         id: e.id || edgeKey,
         source: e.source,
         target: e.target,
-        label: `${e.data?.frequency ?? '-'} , ${e.data?.dataItem ?? '-'}`,
+        label: `${e.data?.period ?? '-'} , ${e.data?.dataItem ?? '-'}`,
         labelBgStyle: { fill: 'rgba(255,255,255,0.8)', padding: 2 },
         style: {
           strokeWidth: 1,

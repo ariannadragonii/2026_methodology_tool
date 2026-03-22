@@ -63,7 +63,7 @@ interface GraphEdge {
   type: string;
 	data?: {
 		dataItem?: string;
-		frequency?: number;
+		period?: number;
 	};
 }
 
@@ -158,7 +158,7 @@ const FinalArchitecture = () => {
 					id: edge.id,
 					source: edge.source,
 					target: edge.target,
-					label: `Data: ${edge.data?.dataItem || 'N/A'}, Period: ${edge.data?.frequency || 'N/A'}`,
+					label: `Data: ${edge.data?.dataItem || 'N/A'}, Period: ${edge.data?.period || 'N/A'}`,
 					type: isPersistent ? 'persistent' : 'volatile',
 					markerEnd: {
 						type: MarkerType.ArrowClosed,

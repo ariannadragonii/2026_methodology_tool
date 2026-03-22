@@ -1,0 +1,80 @@
+{
+  "nodes": [
+    {
+      "id": "producer",
+      "type": "active_p",
+      "name": "P1"
+    },
+    {
+      "id": "n1",
+      "type": "processing",
+      "name": "Lightweight Processing",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "n2",
+      "type": "processing",
+      "name": "Heavy Processing",
+      "inputCardinality": 100,
+      "outputCardinality": 1
+    },
+    {
+      "id": "n3",
+      "type": "merge",
+      "name": "Merge Views",
+      "inputCardinality": 100,
+      "outputCardinality": 1
+    },
+    {
+      "id": "c1",
+      "type": "pull_c",
+      "name": "High-Frequency Consumer",
+      "deliveryGuarantee": "at least"
+    },
+    {
+      "id": "c2",
+      "type": "pull_c",
+      "name": "Low-Frequency Consumer",
+      "deliveryGuarantee": "at least"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "producer",
+      "target": "n1",
+      "data": { "period": 0.001, "dataItem": "unstructured" }
+    },
+    {
+      "id": "e2",
+      "source": "producer",
+      "target": "n2",
+      "data": { "period": 0.001, "dataItem": "unstructured" }
+    },
+    {
+      "id": "e3",
+      "source": "n1",
+      "target": "n3",
+      "data": { "period": 0.001, "dataItem": "structured" }
+    },
+    {
+      "id": "e4",
+      "source": "n2",
+      "target": "n3",
+      "data": { "period": 3600, "dataItem": "structured" }
+    },
+    {
+      "id": "e5",
+      "source": "n3",
+      "target": "c1",
+      "data": { "period": 1, "dataItem": "structured" }
+    },
+    {
+      "id": "e6",
+      "source": "n3",
+      "target": "c2",
+      "data": { "period": 3600, "dataItem": "structured" }
+    }
+  ]
+}

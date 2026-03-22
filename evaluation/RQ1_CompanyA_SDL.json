@@ -68,7 +68,7 @@
       "source": "id_8b7zf83ig",
       "target": "id_svmn6s07a",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -77,7 +77,7 @@
       "source": "id_p8jv7dp48",
       "target": "id_8up94ejn1",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "structured"
       }
     },
@@ -86,7 +86,7 @@
       "source": "id_svmn6s07a",
       "target": "id_mvjk1ji2q",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -95,7 +95,7 @@
       "source": "id_svmn6s07a",
       "target": "id_8up94ejn1",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -104,7 +104,7 @@
       "source": "id_8up94ejn1",
       "target": "id_ny4smpov9",
       "data": {
-        "frequency": 3600,
+        "period": 3600,
         "dataItem": "semistructured"
       }
     },
@@ -113,7 +113,7 @@
       "source": "id_oq4kzpk8v",
       "target": "id_svmn6s07a",
       "data": {
-        "frequency": 0.0001,
+        "period": 0.0001,
         "dataItem": "semistructured"
       }
     },
@@ -122,7 +122,7 @@
       "source": "id_svmn6s07a",
       "target": "id_nuykytz5e",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -131,7 +131,7 @@
       "source": "id_nuykytz5e",
       "target": "id_e5960svv8",
       "data": {
-        "frequency": 1,
+        "period": 1,
         "dataItem": "structured"
       }
     },
@@ -140,7 +140,7 @@
       "source": "id_e5960svv8",
       "target": "id_5h8bz165b",
       "data": {
-        "frequency": 1,
+        "period": 1,
         "dataItem": "structured"
       }
     },
@@ -149,7 +149,7 @@
       "source": "id_p8jv7dp48",
       "target": "id_nuykytz5e",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "structured"
       }
     }

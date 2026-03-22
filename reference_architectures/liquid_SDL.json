@@ -1,0 +1,36 @@
+{
+  "nodes": [
+    {
+      "id": "producer",
+      "type": "active_p",
+      "name": "P1"
+    },
+    {
+      "id": "n1",
+      "type": "processing",
+      "name": "Incremental Processing",
+      "inputCardinality": 1,
+      "outputCardinality": 1
+    },
+    {
+      "id": "c1",
+      "type": "push_c",
+      "name": "High-Frequency Consumer",
+      "deliveryGuarantee": "at least"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "producer",
+      "target": "n1",
+      "data": { "period": 0.1, "dataItem": "unstructured" }
+    },
+    {
+      "id": "e2",
+      "source": "n1",
+      "target": "c1",
+      "data": { "period": 0.0001, "dataItem": "structured" }
+    }
+  ]
+}

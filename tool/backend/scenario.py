@@ -64,9 +64,9 @@ def json_to_graph_scenario(json_scenario):
     for edge in json_scenario["edges"]:
         source = edge["source"]    # ID del nodo sorgente
         target = edge["target"]    # ID del nodo destinazione
-        frequency = edge["data"].get("frequency", "")
+        period = edge["data"].get("period", "")
         dataItem = edge["data"].get("dataItem", "")
-        add_edge(scenario, source, target, frequency, dataItem)
+        add_edge(scenario, source, target, period, dataItem)
 
     return scenario
 
@@ -91,12 +91,12 @@ def find_action_nodes(graph):
     return [node for node in graph.nodes if node not in find_consumers(graph) + find_producers(graph)]
 
 # returns input frequency of a node in a graph
-def find_f_in(graph, node_id): 
+def find_f_in(graph, node_id):
     preds = list(graph.predecessors(node_id))
     f_ins = []
     f_in = 0
     for pred in preds:
-        f_ins.append(graph[pred][node_id]['frequency'])
+        f_ins.append(graph[pred][node_id]['period'])
         f_in = max(f_ins)
     return 1/f_in
 
@@ -106,7 +106,7 @@ def find_f_out(graph, node_id):
     f_outs = []
     f_out = 0
     for succ in succs:
-        f_outs.append(graph[node_id][succ]['frequency'])
+        f_outs.append(graph[node_id][succ]['period'])
         f_out = max(f_outs)
     return 1/f_out
 
@@ -183,11 +183,11 @@ def add_internal_node(scenario, node_name, node_type, input_cardinality, output_
 
 
 # Adds an edge to a scenario
-def add_edge(scenario, left_node, right_node, frequency, dataItem):
+def add_edge(scenario, left_node, right_node, period, dataItem):
     scenario.add_edge(
-        left_node, 
-        right_node, 
-        frequency = frequency, 
+        left_node,
+        right_node,
+        period = period,
         dataItem = dataItem
         ) 
 

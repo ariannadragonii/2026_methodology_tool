@@ -64,7 +64,7 @@
       "source": "id_djbjhpgzt",
       "target": "id_nvh00k3kq",
       "data": {
-        "frequency": 1,
+        "period": 1,
         "dataItem": "semistructured"
       }
     },
@@ -73,7 +73,7 @@
       "source": "id_kl74z6cjj",
       "target": "id_nvh00k3kq",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -82,7 +82,7 @@
       "source": "id_kl74z6cjj",
       "target": "id_dcnp75qo2",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -91,7 +91,7 @@
       "source": "id_nvh00k3kq",
       "target": "id_qmo109hlf",
       "data": {
-        "frequency": 3600,
+        "period": 3600,
         "dataItem": "structured"
       }
     },
@@ -100,7 +100,7 @@
       "source": "id_qmo109hlf",
       "target": "id_vt36nsgd1",
       "data": {
-        "frequency": 0.001,
+        "period": 0.001,
         "dataItem": "structured"
       }
     },
@@ -109,7 +109,7 @@
       "source": "id_vt36nsgd1",
       "target": "id_0yhtbyljr",
       "data": {
-        "frequency": 3600,
+        "period": 3600,
         "dataItem": "structured"
       }
     },
@@ -118,7 +118,7 @@
       "source": "id_0yhtbyljr",
       "target": "id_a2hdk7a85",
       "data": {
-        "frequency": 60,
+        "period": 60,
         "dataItem": "structured"
       }
     },
@@ -127,7 +127,7 @@
       "source": "id_0yhtbyljr",
       "target": "id_z44x1mb70",
       "data": {
-        "frequency": 3600,
+        "period": 3600,
         "dataItem": "structured"
       }
     },
@@ -136,7 +136,7 @@
       "source": "id_dcnp75qo2",
       "target": "id_nvh00k3kq",
       "data": {
-        "frequency": 3600,
+        "period": 3600,
         "dataItem": "structured"
       }
     }

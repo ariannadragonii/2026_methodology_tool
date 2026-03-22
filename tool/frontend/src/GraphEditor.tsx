@@ -175,7 +175,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
 
   const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
     setEditingEdgeId(edge.id);
-    setEdgePeriod(edge.data?.frequency?.toString() || '');
+    setEdgePeriod(edge.data?.period?.toString() || '');
     setEdgeDataItem(edge.data?.dataItem || '');
     setPendingEdge(edge); 
     setShowEdgeModal(true);
@@ -294,7 +294,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
             return {
               ...e,
               data: {
-                frequency: Number(edgePeriod),
+                period: Number(edgePeriod),
                 dataItem: edgeDataItem,
               },
               label: labelText,
@@ -306,8 +306,7 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
         const newEdge: Edge = {
           ...pendingEdge,
           data: {
-            // store frequency as a number in the edge data
-            frequency: Number(edgePeriod),
+            period: Number(edgePeriod),
             dataItem: edgeDataItem,
           },
           label: labelText,
@@ -391,8 +390,8 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
       const loadedEdges = inEdges.map((e: any) => {
         const data = e.data || {};
         const dataItem = data.dataItem || '';
-        const frequency = data.frequency || '';
-        const labelText = e.label ?? `${frequency || '-'} , ${dataItem || '-'}`;
+        const period = data.period || '';
+        const labelText = e.label ?? `${period || '-'} , ${dataItem || '-'}`;
         return ({
           id: e.id || generateUniqueId(),
           source: e.source,
@@ -609,9 +608,9 @@ const GraphEditor = forwardRef<GraphEditorHandle, GraphEditorProps>((props, ref)
         data: ((): any => {
           if (!e.data) return e.data;
           const copy = { ...e.data } as any;
-          if (copy.frequency !== undefined && copy.frequency !== null) {
-            const num = Number(copy.frequency);
-            copy.frequency = Number.isNaN(num) ? copy.frequency : num;
+          if (copy.period !== undefined && copy.period !== null) {
+            const num = Number(copy.period);
+            copy.period = Number.isNaN(num) ? copy.period : num;
           }
           return copy;
         })(),
