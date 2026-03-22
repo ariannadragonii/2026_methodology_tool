@@ -58,7 +58,7 @@
     {
       "id": "id_5h8bz165b",
       "type": "pull_c",
-      "name": "c3",
+      "name": "c_pull_3",
       "deliveryGuarantee": "at most"
     }
   ],
