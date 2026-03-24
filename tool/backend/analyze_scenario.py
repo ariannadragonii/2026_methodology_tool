@@ -77,9 +77,8 @@ def combine_data_flows(json_scenario, json_dataflows):
                 if not persist_state:
                     optimal_type = 'dcs'
                     add_component(graph_architecture, node_id, node_name, node_type, ic, oc, optimal_type)
-                    # Save links that must be persistent
-                    for out_id in optimal_types_links['dcb']:
-                        persistent_links.append((node_id, out_id))
+                    # Note: no need to save persistent links here;
+                    # the batch downstream rule handles this at link creation time
                 else:
                     state_centric_components.append(node_id)
                     optimal_type = 'dcs' if 'dcs' in optimal_types else 'dcb'
@@ -114,8 +113,6 @@ def combine_data_flows(json_scenario, json_dataflows):
                 add_component(graph_architecture, node_id, node_name, node_type, ic, oc, 'dcs')
                 add_component(graph_architecture, state_node_id, node_name, node_type, ic, oc, 'sc')
 
-                for out_id in optimal_types_links['dcb']:
-                    persistent_links.append((node_id, out_id))
                 out_links_processing = optimal_types_links['dcs']
                 periods_dataItems = []
                 for out_link_processing in out_links_processing:
@@ -181,15 +178,18 @@ def combine_data_flows(json_scenario, json_dataflows):
         print(f"start = {start_id}")
 
         # Check if the link must be persistent
-        is_persistent_by_consumer_req = (source_id, dest_id) in persistent_links
-        is_persistent_by_dcb_rule = False
-        
         dest_node_in_arch = graph_architecture.nodes.get(dest_id)
+
+        # 1. Delivery guarantee: links from active producers
+        is_persistent_by_delivery = (source_id, dest_id) in persistent_links
+
+        # 2. Batch downstream rule (Step 2): persistent if dest is dcb and source is not sc
+        is_persistent_by_dcb_rule = False
         if dest_node_in_arch and dest_node_in_arch.get('optimalType') == 'dcb':
             if graph_architecture.nodes[start_id].get('optimalType') != 'sc':
                 is_persistent_by_dcb_rule = True
 
-        if is_persistent_by_consumer_req or is_persistent_by_dcb_rule:
+        if is_persistent_by_delivery or is_persistent_by_dcb_rule:
             optimal_type = 'persistent'
         else:
             optimal_type = 'volatile'

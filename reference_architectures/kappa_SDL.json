@@ -3,25 +3,25 @@
     {
       "id": "p1",
       "type": "active_p",
-      "name": "Event Source"
+      "name": "p1_active"
     },
     {
       "id": "n1",
       "type": "processing",
-      "name": "Event Processing",
+      "name": "a1",
       "inputCardinality": 1,
       "outputCardinality": 1
     },
     {
       "id": "id_89hpi9kqj",
       "type": "push_c",
-      "name": "C1",
+      "name": "C1_push",
       "deliveryGuarantee": "at most"
     },
     {
       "id": "id_lmnf27cau",
-      "type": "pull_c",
-      "name": "C2",
+      "type": "push_c",
+      "name": "C2_pull",
       "deliveryGuarantee": "at most"
     }
   ],
@@ -31,7 +31,7 @@
       "source": "p1",
       "target": "n1",
       "data": {
-        "period": 0.1,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     },
@@ -40,7 +40,7 @@
       "source": "n1",
       "target": "id_89hpi9kqj",
       "data": {
-        "period": 0.01,
+        "period": 0.0001,
         "dataItem": "semistructured"
       }
     },
@@ -49,7 +49,7 @@
       "source": "n1",
       "target": "id_lmnf27cau",
       "data": {
-        "period": 0.1,
+        "period": 0.001,
         "dataItem": "semistructured"
       }
     }

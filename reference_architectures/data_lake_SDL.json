@@ -3,23 +3,23 @@
     {
       "id": "id_z9y9z6igu",
       "type": "pull_c",
-      "name": "Consumer_2",
+      "name": "C1_pull",
       "deliveryGuarantee": "at least"
     },
     {
       "id": "id_sfvvvi87w",
       "type": "active_p",
-      "name": "Producer_1"
+      "name": "P1_active"
     },
     {
       "id": "id_khuoxajdk",
       "type": "active_p",
-      "name": "Producer_2"
+      "name": "P2_active"
     },
     {
       "id": "id_a84jlnopt",
       "type": "pull_c",
-      "name": "Consumer_1",
+      "name": "C2_pull",
       "deliveryGuarantee": "at least"
     }
   ],
@@ -28,15 +28,6 @@
       "id": "id_000mr3mja",
       "source": "id_sfvvvi87w",
       "target": "id_z9y9z6igu",
-      "data": {
-        "period": 0.001,
-        "dataItem": "unstructured"
-      }
-    },
-    {
-      "id": "id_p2zazbzrw",
-      "source": "id_sfvvvi87w",
-      "target": "id_a84jlnopt",
       "data": {
         "period": 0.001,
         "dataItem": "unstructured"
@@ -57,6 +48,15 @@
       "target": "id_a84jlnopt",
       "data": {
         "period": 1,
+        "dataItem": "unstructured"
+      }
+    },
+    {
+      "id": "id_vo7qqevx4",
+      "source": "id_sfvvvi87w",
+      "target": "id_a84jlnopt",
+      "data": {
+        "period": 0.001,
         "dataItem": "unstructured"
       }
     }

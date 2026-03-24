@@ -3,19 +3,19 @@
     {
       "id": "producer",
       "type": "active_p",
-      "name": "P1"
+      "name": "P1_active"
     },
     {
       "id": "n1",
       "type": "processing",
-      "name": "Incremental Processing",
+      "name": "a1",
       "inputCardinality": 1,
       "outputCardinality": 1
     },
     {
       "id": "c1",
       "type": "push_c",
-      "name": "High-Frequency Consumer",
+      "name": "C1_push",
       "deliveryGuarantee": "at least"
     }
   ],

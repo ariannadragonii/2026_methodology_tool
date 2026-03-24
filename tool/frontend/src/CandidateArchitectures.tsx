@@ -269,19 +269,25 @@ const CandidateArchitectures: React.FC = () => {
         }
         const seen = new Map<string, { graph: CandidateArchitecture; count: number }>();
         candidates.forEach(graph => {
-            // Rimuovi lo score per la chiave di confronto, ma mantienilo nel grafo
-            const { score, ...graphWithoutScore } = graph;
-            const canonicalGraph = {
-                ...graphWithoutScore,
-                nodes: [...graphWithoutScore.nodes].sort((a, b) => a.id.localeCompare(b.id)),
-                edges: [...graphWithoutScore.edges].sort((a, b) => a.id.localeCompare(b.id)),
-            };
-            const key = JSON.stringify(canonicalGraph);
+            // Build a canonical key based only on component types and link types,
+            // ignoring specific node IDs, periods, and dataItems.
+            // Two architectures with the same component types and link types are the same architecture.
+            const nodeTypeMap = Object.fromEntries(
+                graph.nodes.map(n => [n.id, `${n.type}:${n.optimalType ?? ''}`])
+            );
+            const nodeKey = [...graph.nodes]
+                .map(n => `${n.type}:${n.optimalType ?? ''}`)
+                .sort()
+                .join('|');
+            const edgeKey = [...graph.edges]
+                .map(e => `${nodeTypeMap[e.source] ?? e.source}->${nodeTypeMap[e.target] ?? e.target}:${e.type}`)
+                .sort()
+                .join('|');
+            const key = `${nodeKey}##${edgeKey}`;
             const entry = seen.get(key);
             if (entry) {
                 entry.count++;
             } else {
-                // Salva il grafo originale con lo score
                 seen.set(key, { graph, count: 1 });
             }
         });
