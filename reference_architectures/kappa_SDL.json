@@ -20,7 +20,7 @@
     },
     {
       "id": "id_lmnf27cau",
-      "type": "push_c",
+      "type": "pull_c",
       "name": "C2_pull",
       "deliveryGuarantee": "at most"
     }
@@ -31,7 +31,7 @@
       "source": "p1",
       "target": "n1",
       "data": {
-        "period": 0.001,
+        "period": 0.1,
         "dataItem": "semistructured"
       }
     },
