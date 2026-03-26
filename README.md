@@ -14,6 +14,7 @@ The repository is organized as follows:
 - **`evaluation/`**: Contains the artifacts used to answer the Research Questions (RQs):
   - **RQ1**: JSON files representing the industrial scenarios used to validate the methodology, along with PDF screenshots illustrating the tool's output at each step of the methodology for each scenario.
   - **RQ2**: Raw data and results from the practitioner survey.
+  - A screenshot of the tool's cost comparison view for a single node (`costs_comparison_example.pdf`), showing how the methodology compares the costs of different architectural alternatives.
 - **`reference_architectures/`**: Contains a supplementary study (not included in the paper) demonstrating that the proposed methodology can correctly derive well-known reference architectures for data-intensive systems. For each architecture (Data Lake, Lambda, Kappa, Liquid), the folder includes the corresponding SDL scenario as a JSON file and a PDF document (`references.pdf`) describing the full analysis: the SDL scenario modeling, the expected ADL architecture, and the comparison between the methodology's output and the reference architecture.
 - **`paper_figures/`**: Contains supplementary material, such as high-resolution figures referenced in the article.
 
