@@ -1,6 +1,6 @@
-# A Model-Based Methodology for Designing Data-Intensive Architectures
+# A Model-Driven Methodology to Assist Designing Data-Intensive Architectures
 
-This repository contains the replication package and the supporting tool for the paper **"A Model-Based Methodology for Designing Data-Intensive Architectures"** submitted to the **2026 European Conference on Software Architecture (ECSA 2026)**.
+This repository contains the replication package and the supporting tool for the paper **"A Model-Driven Methodology to Assist Designing Data-Intensive Architectures"** submitted to the journal **Computing**.
 
 The repository provides all the necessary artifacts to replicate the study, including the source code of the proposed tool, the datasets used for evaluation, and high-resolution versions of the figures presented in the paper.
 
@@ -129,6 +129,3 @@ To replicate the results for RQ1:
 The `evaluation/` folder contains:
 - The questionnaire used for the survey.
 - Anonymized responses from participants (`RQ2_results.csv`).
-
----
-*Note: This repository is anonymized for double-blind review.*
